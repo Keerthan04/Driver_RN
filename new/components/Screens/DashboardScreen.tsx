@@ -102,50 +102,44 @@ const DashboardScreen = ({ navigation }: any) => {
           </View>
         </Surface>
 
-        <Surface className=" p-4 m-2 rounded-lg">
-          <Text className=" text-xl text-center font-bold mb-3 p-2 rounded-lg">
-            Daily Summary
-          </Text>
-          <View className=" p-3 rounded-lg">
-            <View className="flex-row gap-2 mb-2">
-              <View className="w-1/2 items-center justify-center bg-gray-200 rounded-lg p-3">
-                <MaterialCommunityIcons
-                  name="package-variant"
-                  size={24}
-                  color="#3b82f6"
-                />
-                <Text className="text-lg font-bold mt-1">12</Text>
-                <Text className="text-gray-500 text-xs">Deliveries</Text>
-              </View>
-              <View className="w-1/2 items-center justify-center bg-gray-200 rounded-lg p-3">
-                <MaterialCommunityIcons
-                  name="currency-usd"
-                  size={24}
-                  color="#3b82f6"
-                />
-                <Text className="text-lg font-bold mt-1">$142</Text>
-                <Text className="text-gray-500 text-xs">Earnings</Text>
-              </View>
+        <Surface style={styles.card}>
+          <Text style={styles.cardTitle}>Daily Summary</Text>
+          <View style={styles.statsGrid}>
+            <View style={styles.statItem}>
+              <MaterialCommunityIcons
+                name="package-variant"
+                size={24}
+                color="#3b82f6"
+              />
+              <Text style={styles.statValue}>12</Text>
+              <Text style={styles.statLabel}>Deliveries</Text>
             </View>
-            <View className="flex-row gap-2">
-              <View className="w-1/2 items-center justify-center bg-gray-200 rounded-lg p-3">
-                <MaterialCommunityIcons
-                  name="clock-outline"
-                  size={24}
-                  color="#3b82f6"
-                />
-                <Text className="text-lg font-bold mt-1">5.2</Text>
-                <Text className="text-gray-500 text-xs">Hours</Text>
-              </View>
-              <View className="w-1/2 items-center justify-center bg-gray-200 rounded-lg p-3">
-                <MaterialCommunityIcons
-                  name="trending-up"
-                  size={24}
-                  color="#3b82f6"
-                />
-                <Text className="text-lg font-bold mt-1">98%</Text>
-                <Text className="text-gray-500 text-xs">On-time</Text>
-              </View>
+            <View style={styles.statItem}>
+              <MaterialCommunityIcons
+                name="currency-usd"
+                size={24}
+                color="#3b82f6"
+              />
+              <Text style={styles.statValue}>$142</Text>
+              <Text style={styles.statLabel}>Earnings</Text>
+            </View>
+            <View style={styles.statItem}>
+              <MaterialCommunityIcons
+                name="clock-outline"
+                size={24}
+                color="#3b82f6"
+              />
+              <Text style={styles.statValue}>5.2</Text>
+              <Text style={styles.statLabel}>Hours</Text>
+            </View>
+            <View style={styles.statItem}>
+              <MaterialCommunityIcons
+                name="trending-up"
+                size={24}
+                color="#3b82f6"
+              />
+              <Text style={styles.statValue}>98%</Text>
+              <Text style={styles.statLabel}>On-time</Text>
             </View>
           </View>
         </Surface>
@@ -309,7 +303,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   statItem: {
-    width: "48%",
+    width: "50%",
     padding: 8,
     alignItems: "center",
     justifyContent: "center",

@@ -1,7 +1,6 @@
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Feather from "@expo/vector-icons/Feather";
 
 type Delivery = {
   id: string;
@@ -72,8 +71,8 @@ const DeliveryQueue = ({ navigation }: DeliveryQueueProps) => {
         >
           <View style={styles.deliveryContent}>
             <View style={styles.iconContainer}>
-              <Feather
-                name="package"
+              <MaterialCommunityIcons
+                name="package-variant"
                 size={20}
                 color="#3b82f6"
               />
