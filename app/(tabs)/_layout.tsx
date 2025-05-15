@@ -7,23 +7,14 @@ import "../globals.css"
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "blue" }}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: "#FFD86B",tabBarStyle: { backgroundColor: "#111827"} }}>
       <Tabs.Screen
         name="index"
         options={{
           title: "Dashboard",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <AntDesign size={28} name="home" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="route"
-        options={{
-          title: "Route",
-          tabBarIcon: ({ color }) => (
-            <FontAwesome6 size={28} name="route" color={color} />
+            <AntDesign size={24} name="home" color={color} />
           ),
         }}
       />
@@ -31,8 +22,19 @@ export default function TabLayout() {
         name="active"
         options={{
           title: "Active",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Fontisto size={28} name="checkbox-active" color={color} />
+            <Fontisto size={24} name="checkbox-active" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="route"
+        options={{
+          title: "Route",
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <FontAwesome6 size={24} name="route" color={color} />
           ),
         }}
       />
@@ -40,8 +42,9 @@ export default function TabLayout() {
         name="account"
         options={{
           title: "Account",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
-            <AntDesign size={28} name="user" color={color} />
+            <AntDesign size={24} name="user" color={color} />
           ),
         }}
       />
