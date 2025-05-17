@@ -5,6 +5,7 @@ import { Delivery } from "@/types";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Link } from "expo-router";
 import { Text, View,ScrollView } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import { Button } from "react-native-paper";
 const sampleDelivery: Delivery = {
   id: "DEL-1234",

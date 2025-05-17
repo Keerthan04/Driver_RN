@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { Card } from "react-native-paper";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
-
+import polyline from "@mapbox/polyline";
 import { Delivery } from "@/types";
+import Constants from "expo-constants";
+
+
+
 
 const deliveries: Delivery[] = [
   {
@@ -73,8 +77,53 @@ export default function DeliveryMap({ deliveryId }: { deliveryId: string }) {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
+  const [routeCoords, setRouteCoords] = useState<
+    { latitude: number; longitude: number }[]
+  >([]);
+  const [destinationCoordinates, setDestinationCoords] = useState<
+    { latitude: number; longitude: number }[]
+  >([]);
 
-  const delivery = deliveries.find((d) => d.id === deliveryId) || deliveries[0];
+  // const delivery = deliveries.find((d) => d.id === deliveryId) || deliveries[1];
+  const delivery = deliveries[1];
+  useEffect(() => {
+    const fetchRoute = async () => {
+      const origin = encodeURIComponent(currentLocation);
+      const destination = encodeURIComponent(delivery.address);
+      const originCoords = await getCoordinates(origin);
+      const destinationCoords = await getCoordinates(destination);
+      if (originCoords && destinationCoords) {
+        setRegion({
+          latitude: (originCoords.latitude + destinationCoords.latitude) / 2,
+          longitude: (originCoords.longitude + destinationCoords.longitude) / 2,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        });
+        setDestinationCoords([destinationCoords]);
+      }
+
+      // const ApiKey = process.env.GOOGLE_MAPS_API_KEY as string;
+      const ApiKey = Constants?.expoConfig?.extra?.googleMapsApiKey as string;
+      // console.log(ApiKey);
+      const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${ApiKey}&mode=driving`;
+
+      const res = await fetch(url);
+      const json = await res.json();
+      // console.log(json);
+
+      if (json.routes.length) {
+        const points = polyline.decode(json.routes[0].overview_polyline.points);
+        // console.log(points);
+        const coords = points.map(([lat, lng]) => ({
+          latitude: lat,
+          longitude: lng,
+        }));
+        setRouteCoords(coords);
+      }
+    };
+
+    fetchRoute();
+  }, [currentLocation, delivery.address]);
 
   useEffect(() => {
     // Simulate different ETAs based on delivery priority
@@ -118,26 +167,49 @@ export default function DeliveryMap({ deliveryId }: { deliveryId: string }) {
   return (
     <View className="flex-1 w-full px-2">
       <Card className="overflow-hidden rounded-lg my-2 shadow-lg">
-        <View className="h-80 bg-gray-100">
-          {/* should test it out properly -> requires android studio and all */}
+        {/* should have a height of 320px atleast to work so that was the problem 
+        IMP : make the recenter button also if can a google maps button to open the navigation there if we can or our own wala also
+        */}
+        <View style={{ height: 420 }}>
           <MapView
+            style={{ flex: 1 }}
             provider={PROVIDER_GOOGLE}
-            className="w-full h-full"
             region={region}
+            showsUserLocation={true}
+            showsMyLocationButton={true}
+            showsCompass={true}
+            zoomEnabled={true}
+            zoomControlEnabled={true}
           >
             <Marker
               coordinate={{
-                latitude: region.latitude,
-                longitude: region.longitude,
+                latitude:
+                  destinationCoordinates[0]?.latitude || region.latitude,
+                longitude:
+                  destinationCoordinates[0]?.longitude || region.longitude,
               }}
               title="Delivery Location"
               description={delivery.address}
+            />
+            <Polyline
+              coordinates={routeCoords}
+              strokeWidth={4}
+              strokeColor="#2563eb"
+            />
+            <Marker
+              coordinate={{
+                latitude: routeCoords[0]?.latitude || region.latitude,
+                longitude: routeCoords[0]?.longitude || region.longitude,
+              }}
+              title="Origin"
+              description={currentLocation}
+              pinColor="#111827"
             />
           </MapView>
         </View>
 
         <View className="p-4 bg-white">
-          <View className="flex-row justify-between items-center mb-4">
+          <View className="flex-col justify-between gap-2 mb-4">
             <View className="flex-row items-center">
               <Ionicons name="location" size={20} color="#2563eb" />
               <View className="ml-2">
@@ -189,3 +261,29 @@ export default function DeliveryMap({ deliveryId }: { deliveryId: string }) {
     </View>
   );
 }
+
+const getCoordinates = async (address: string) => {
+  const apiKey = Constants?.expoConfig?.extra?.googleMapsApiKey; // or from Constants.manifest.extra.googleMapsApiKey if using expo-constants
+  const encodedAddress = encodeURIComponent(address);
+
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${apiKey}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.status === "OK") {
+      const location = data.results[0].geometry.location;
+      return {
+        latitude: location.lat,
+        longitude: location.lng,
+      };
+    } else {
+      console.error("Geocoding error:", data.status);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching coordinates:", error);
+    return null;
+  }
+};

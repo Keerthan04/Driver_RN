@@ -1,33 +1,34 @@
 "use client";
 
-import { useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { Text, Surface, Switch, Button, Badge } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { Badge, Surface, Switch, Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../context/AuthContext";
 // import { requestLocationPermission } from "../../services/LocationService";
 // import { requestNotificationPermission } from "../../services/NotificationService";
 import DeliveryQueue from "../ui/DeliveryQueue";
+import WeatherAlert from "../ui/WeatherAlert";
 // import NotificationBell from "../../components/NotificationBell";
 
 const DashboardScreen = ({ navigation }: any) => {
   const { user } = useAuth();
   const [isAvailable, setIsAvailable] = useState(true);
-//   const [locationPermission, setLocationPermission] = useState(false);
-//   const [notificationPermission, setNotificationPermission] = useState(false);
+  //   const [locationPermission, setLocationPermission] = useState(false);
+  //   const [notificationPermission, setNotificationPermission] = useState(false);
 
-//   useEffect(() => {
-//     const checkPermissions = async () => {
-//       const locPerm = await requestLocationPermission();
-//       setLocationPermission(locPerm);
+  //   useEffect(() => {
+  //     const checkPermissions = async () => {
+  //       const locPerm = await requestLocationPermission();
+  //       setLocationPermission(locPerm);
 
-//       const notifPerm = await requestNotificationPermission();
-//       setNotificationPermission(notifPerm);
-//     };
+  //       const notifPerm = await requestNotificationPermission();
+  //       setNotificationPermission(notifPerm);
+  //     };
 
-//     checkPermissions();
-//   }, []);
+  //     checkPermissions();
+  //   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,7 +61,8 @@ const DashboardScreen = ({ navigation }: any) => {
           <DeliveryQueue navigation={navigation} />
         </Surface>
 
-        <Surface style={styles.mapCard}>
+        {/* for now no need of live location tracking as in route we have it */}
+        {/* <Surface style={styles.mapCard}>
           <View style={styles.mapPlaceholder}>
             <Text style={styles.mapText}>Live Location Tracking</Text>
             <Text style={styles.mapSubtext}>
@@ -83,9 +85,9 @@ const DashboardScreen = ({ navigation }: any) => {
               Recenter
             </Button>
           </View>
-        </Surface>
+        </Surface> */}
 
-        <Surface style={styles.alertCard}>
+        {/* <Surface style={styles.alertCard}>
           <View style={styles.alertContent}>
             <MaterialCommunityIcons
               name="weather-pouring"
@@ -100,12 +102,16 @@ const DashboardScreen = ({ navigation }: any) => {
               </Text>
             </View>
           </View>
-        </Surface>
+        </Surface> */}
+        <WeatherAlert/>
 
-        <Surface className=" p-4 m-2 rounded-lg">
-          <Text className=" text-xl text-center font-bold mb-3 p-2 rounded-lg">
-            Daily Summary
-          </Text>
+        {/* To do the dashboard in proper way */}
+        <Surface className=" p-4 m-2 rounded-lg ">
+          <View className="w-full rounded-lg flex-row items-center justify-center text-center font-bold">
+            <Text className="text-xl text-center font-bold mb-3 p-2 rounded-lg">
+              Daily Summary
+            </Text>
+          </View>
           <View className=" p-3 rounded-lg">
             <View className="flex-row gap-2 mb-2">
               <View className="w-1/2 items-center justify-center bg-gray-200 rounded-lg p-3">
@@ -219,6 +225,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 16,
     elevation: 2,
+    backgroundColor: "#111827",
   },
   cardHeader: {
     flexDirection: "row",
@@ -229,6 +236,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: "bold",
+    color: "#f3f4f6",
   },
   badge: {
     backgroundColor: "#f3f4f6",

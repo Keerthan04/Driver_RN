@@ -3,6 +3,10 @@ export default {
   expo: {
     name: "driver_rn_app",
     slug: "driver_rn_app",
+    extra: {
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+      openWeatherApiKey: process.env.OPENWEATHERMAPS_API_KEY,
+    },
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",

@@ -75,7 +75,7 @@ const DeliveryQueue = ({ navigation }: DeliveryQueueProps) => {
               <Feather
                 name="package"
                 size={20}
-                color="#3b82f6"
+                color="white"
               />
             </View>
             <View style={styles.deliveryInfo}>
@@ -84,7 +84,7 @@ const DeliveryQueue = ({ navigation }: DeliveryQueueProps) => {
                 <MaterialCommunityIcons
                   name="clock-outline"
                   size={12}
-                  color="#6b7280"
+                  color="white"
                 />
                 <Text style={styles.time}>{delivery.time}</Text>
               </View>
@@ -117,7 +117,7 @@ const DeliveryQueue = ({ navigation }: DeliveryQueueProps) => {
             <MaterialCommunityIcons
               name="chevron-right"
               size={20}
-              color="#6b7280"
+              color="white"
             />
           </View>
         </TouchableOpacity>
@@ -138,12 +138,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e5e7eb",
     borderRadius: 8,
-    backgroundColor: "white",
+    backgroundColor: "#374151",
+    
   },
   deliveryContent: {
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
+    backgroundColor: "#374151",
   },
   iconContainer: {
     width: 40,
@@ -159,6 +161,7 @@ const styles = StyleSheet.create({
   },
   address: {
     fontWeight: "500",
+    color: "#f3f4f6",
   },
   timeContainer: {
     flexDirection: "row",
@@ -167,7 +170,7 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 12,
-    color: "#6b7280",
+    color: "#f3f4f6",
     marginLeft: 4,
   },
   rightContent: {
