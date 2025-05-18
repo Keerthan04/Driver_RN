@@ -1,7 +1,4 @@
-"use client";
-
-import { View } from "react-native";
-import { Text, Button, Menu } from "react-native-paper";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -53,54 +50,59 @@ const routeStops: RouteStop[] = [
 ];
 
 const statusClasses = {
-  completed: "bg-green-100 text-green-800",
-  "in-progress": "bg-blue-100 text-blue-800",
-  pending: "bg-gray-100 text-gray-800",
+  completed: "bg-green-700 text-green-200",
+  "in-progress": "bg-blue-700 text-blue-200",
+  pending: "bg-gray-700 text-gray-200",
 };
 
 export function RouteList() {
   const navigation = useNavigation<any>();
   const [menuVisible, setMenuVisible] = useState<string | null>(null);
 
+  const openMenu = (id: string) => {
+    setMenuVisible(menuVisible === id ? null : id);
+  };
+
   return (
-    <View className="space-y-3">
+    //shd do as scrollview
+    <ScrollView className="space-y-4">
       {routeStops.map((stop) => (
         <View
           key={stop.id}
-          className={`p-3 rounded-lg border ${
-            stop.isActive ? "border-primary bg-blue-50" : "border-gray-200"
+          className={`p-3 rounded-lg mb-2 border ${
+            stop.isActive ? "border-[#FFD86B] bg-gray-700" : "border-gray-700 bg-gray-700"
           }`}
         >
           <View className="flex-row justify-between items-center">
             <View className="flex-row items-center flex-1">
               <View
                 className={`w-10 h-10 rounded-full ${
-                  stop.isActive ? "bg-blue-100" : "bg-gray-100"
+                  stop.isActive ? "bg-gray-600" : "bg-gray-800"
                 } justify-center items-center mr-3`}
               >
                 {stop.status === "completed" ? (
                   <MaterialCommunityIcons
                     name="check-circle"
                     size={20}
-                    color={stop.isActive ? "#3b82f6" : "#6b7280"}
+                    color={stop.isActive ? "#FFD86B" : "white"}
                   />
                 ) : (
                   <MaterialCommunityIcons
                     name="map-marker"
                     size={20}
-                    color={stop.isActive ? "#3b82f6" : "#6b7280"}
+                    color={stop.isActive ? "#FFD86B" : "white"}
                   />
                 )}
               </View>
               <View>
-                <Text className="font-medium">{stop.address}</Text>
+                <Text className="font-medium text-white">{stop.address}</Text>
                 <View className="flex-row items-center mt-1">
                   <MaterialCommunityIcons
                     name="clock-outline"
                     size={12}
-                    color="#6b7280"
+                    color="white"
                   />
-                  <Text className="text-xs text-gray-500 ml-1">
+                  <Text className="text-xs text-gray-300 ml-1">
                     {stop.time}
                   </Text>
                 </View>
@@ -108,11 +110,10 @@ export function RouteList() {
             </View>
             <View className="flex-row items-center space-x-2">
               <View
-                className={`px-2 py-1 rounded-full ${
-                  statusClasses[stop.status]
+                className={`px-2 py-1 rounded-full bg-gray-800
                 }`}
               >
-                <Text className="text-xs font-medium">
+                <Text className="text-xs font-medium text-white">
                   {stop.status === "completed"
                     ? "Completed"
                     : stop.status === "in-progress"
@@ -120,39 +121,46 @@ export function RouteList() {
                     : "Pending"}
                 </Text>
               </View>
-              <Menu
-                visible={menuVisible === stop.id}
-                onDismiss={() => setMenuVisible(null)}
-                anchor={
-                  <Button
-                    mode="text"
-                    onPress={() => setMenuVisible(stop.id)}
-                    icon="dots-vertical"
-                    compact
-                    className="w-8 h-8 m-0 p-0"
-                  />
-                }
+              <TouchableOpacity
+                onPress={() => openMenu(stop.id)}
+                className="w-8 h-8 justify-center items-center"
               >
-                <Menu.Item
-                  onPress={() => {
-                    setMenuVisible(null);
-                    navigation.navigate("DeliveryDetail", { id: stop.id });
-                  }}
-                  title="View Details"
+                <MaterialCommunityIcons
+                  name="dots-vertical"
+                  size={20}
+                  color="white"
                 />
-                <Menu.Item
-                  onPress={() => setMenuVisible(null)}
-                  title="Skip Delivery"
-                />
-                <Menu.Item
-                  onPress={() => setMenuVisible(null)}
-                  title="Report Issue"
-                />
-              </Menu>
+              </TouchableOpacity>
             </View>
           </View>
+          
+          {menuVisible === stop.id && (
+            <View className="mt-2 bg-gray-800 rounded-md overflow-hidden">
+              <TouchableOpacity
+                onPress={() => {
+                  setMenuVisible(null);
+                  navigation.navigate("DeliveryDetail", { id: stop.id });
+                }}
+                className="px-4 py-2 border-b border-gray-700"
+              >
+                <Text className="text-white">View Details</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setMenuVisible(null)}
+                className="px-4 py-2 border-b border-gray-700"
+              >
+                <Text className="text-white">Skip Delivery</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setMenuVisible(null)}
+                className="px-4 py-2"
+              >
+                <Text className="text-white">Report Issue</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }

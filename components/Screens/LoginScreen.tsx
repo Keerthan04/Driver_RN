@@ -56,14 +56,14 @@ const LoginScreen = () => {
           <View className="w-16 h-16 rounded-full bg-[#FFD86B] justify-center items-center mb-4">
             <MaterialCommunityIcons name="shield" size={32} color="#111827" />
           </View>
-          <Text className="text-2xl font-bold text-white">ParcelAI</Text>
+          <Text className="text-2xl font-bold text-white">Nexustron</Text>
           <Text className="text-gray-400 mt-1">Driver Portal</Text>
         </View>
 
-        <View className="flex-row mb-4 rounded-lg overflow-hidden bg-gray-800">
+        <View className="flex-row mb-4 rounded-lg overflow-hidden bg-gray-700">
           <TouchableOpacity
             className={`flex-1 py-3 items-center ${
-              activeTab === "login" ? "bg-gray-700" : ""
+              activeTab === "login" ? "bg-gray-800" : ""
             }`}
             onPress={() => setActiveTab("login")}
           >
@@ -79,7 +79,7 @@ const LoginScreen = () => {
           </TouchableOpacity>
           <TouchableOpacity
             className={`flex-1 py-3 items-center ${
-              activeTab === "join" ? "bg-gray-700" : ""
+              activeTab === "join" ? "bg-gray-800" : ""
             }`}
             onPress={() => setActiveTab("join")}
           >
@@ -96,7 +96,7 @@ const LoginScreen = () => {
         </View>
 
         {activeTab === "login" ? (
-          <View className="p-4 rounded-lg bg-gray-800 mb-4">
+          <View className="p-4 rounded-lg bg-gray-700 mb-4">
             <Text className="text-lg font-bold text-white mb-1">
               Driver Login
             </Text>
@@ -110,7 +110,7 @@ const LoginScreen = () => {
                 <TextInput
                   value={email}
                   onChangeText={setEmail}
-                  className="bg-gray-700 rounded-md px-3 py-2.5 text-white"
+                  className="bg-gray-800 rounded-md px-3 py-2.5 text-white"
                   placeholderTextColor="#9CA3AF"
                   keyboardType="email-address"
                   autoCapitalize="none"
@@ -123,7 +123,7 @@ const LoginScreen = () => {
                   <TouchableOpacity
                     onPress={() => router.push("/(tabs)")}
                   >
-                    <Text className="text-[#FFD86B] text-xs">
+                    <Text className="text-[#FFD86B] text-xs mt-2">
                       Forgot password?
                     </Text>
                   </TouchableOpacity>
@@ -132,7 +132,7 @@ const LoginScreen = () => {
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry
-                  className="bg-gray-700 rounded-md px-3 py-2.5 text-white"
+                  className="bg-gray-800 rounded-md px-3 py-2.5 text-white"
                   placeholderTextColor="#9CA3AF"
                 />
               </View>
@@ -140,7 +140,7 @@ const LoginScreen = () => {
               <View className="flex-row items-center">
                 <TouchableOpacity
                   onPress={() => setRememberMe(!rememberMe)}
-                  className={`w-5 h-5 rounded border ${
+                  className={`w-5 h-5 mt-2 rounded border ${
                     rememberMe
                       ? "bg-[#FFD86B] border-[#FFD86B]"
                       : "border-gray-400"
@@ -154,12 +154,12 @@ const LoginScreen = () => {
                     />
                   )}
                 </TouchableOpacity>
-                <Text className="ml-2 text-gray-400 text-sm">
+                <Text className="ml-2 mt-2 text-gray-400 text-sm">
                   Remember me for 30 days
                 </Text>
               </View>
 
-              {error ? <Text className="text-red-500">{error}</Text> : null}
+              {error ? <Text className="text-red-400">{error}</Text> : null}
 
               <TouchableOpacity
                 onPress={handleLogin}
@@ -221,10 +221,10 @@ const LoginScreen = () => {
               </View>
 
               <View className="flex-row items-center">
-                <TouchableOpacity className="w-5 h-5 rounded border border-gray-400 justify-center items-center">
+                <TouchableOpacity className="w-5 h-5 mt-2 rounded border border-gray-400 justify-center items-center">
                   {/* Empty checkbox */}
                 </TouchableOpacity>
-                <Text className="ml-2 text-gray-400 text-sm">
+                <Text className="ml-2 text-gray-400 text-sm mt-2">
                   I agree to the{" "}
                   <Text className="text-[#FFD86B]">terms and conditions</Text>
                 </Text>
@@ -241,9 +241,9 @@ const LoginScreen = () => {
 
         <View className="mt-6 items-center">
           <Text className="text-gray-400 text-xs">
-            © 2025 ParcelAI. All rights reserved.
+            © 2025 Nexustron. All rights reserved.
           </Text>
-          <View className="flex-row mt-2 space-x-4">
+          <View className="flex-row mt-2 gap-2 space-x-4">
             <TouchableOpacity>
               <Text className="text-gray-400 text-xs">Privacy</Text>
             </TouchableOpacity>

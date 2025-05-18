@@ -1,68 +1,79 @@
-"use client";
-
-import { View, ScrollView, TouchableOpacity } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { View, ScrollView, TouchableOpacity, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { PerformanceMetrics } from "../../components/PerformanceMetrics";
-import { EarningsInfo } from "../../components/EarningsInfo";
-import { ProfileSettings } from "../../components/ProfileSettings";
-import { VehicleInfo } from "../../components/VehicleInfo";
+import { PerformanceMetrics } from "../ui/Account/PerformanceMetrics";
+import { EarningsInfo } from "../ui/Account/EarningsInfo";
+import { ProfileSettings } from "../ui/Account/ProfileSettings";
+import { VehicleInfo } from "../ui/Account/VehicleInfo";
+import { Link } from "expo-router";
 
 const AccountScreen = () => {
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState("performance");
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-white">
       <ScrollView className="p-4 pb-20">
         <View className="flex-row justify-between items-center mb-4">
           <View>
-            <Text className="text-2xl font-bold">Account</Text>
-            <Text className="text-gray-500">
-              Manage your profile and settings
-            </Text>
+            <View className="flex-row items-center">
+              <Link href={"/(tabs)"}>
+                <View className="rounded-lg p-2 mr-3">
+                  <AntDesign name="back" size={32} color="#111827" />
+                </View>
+              </Link>
+              <View>
+                <Text className="text-2xl font-bold text-black">
+                  Acount Overview
+                </Text>
+                <Text className="text-gray-900">
+                  Manage Your Profile
+                </Text>
+              </View>
+            </View>
           </View>
-          <Button
-            mode="text"
-            icon="cog"
-            onPress={() => console.log("Settings")}
-          />
+          <TouchableOpacity
+            className="flex-row items-center border border-red-500 rounded-lg px-4 py-2"
+            onPress={() => logout()}
+          >
+            <MaterialCommunityIcons name="logout" size={20} color="#ef4444" />
+            <Text className="ml-2 text-red-500 font-medium">Sign Out</Text>
+          </TouchableOpacity>
         </View>
 
-        <View className="flex-row items-center p-4 bg-gray-100 rounded-lg mb-4">
-          <View className="w-16 h-16 rounded-full bg-blue-100 justify-center items-center">
-            <MaterialCommunityIcons name="account" size={32} color="#3b82f6" />
+        <View className="flex-row items-center p-4 bg-gray-800 rounded-lg mb-4">
+          <View className="w-16 h-16 rounded-full bg-gray-700 justify-center items-center">
+            <MaterialCommunityIcons name="account" size={32} color="white" />
           </View>
           <View className="ml-4">
-            <Text className="text-xl font-bold">Alex Johnson</Text>
+            <Text className="text-xl font-bold text-white">Keerthan Kumar C</Text>
             <View className="flex-row items-center">
-              <MaterialCommunityIcons name="star" size={16} color="#eab308" />
-              <Text className="text-gray-500 ml-1">4.9 Rating</Text>
+              <MaterialCommunityIcons name="star" size={16} color="#FFD86B" />
+              <Text className="text-gray-300 ml-1">4.9 Rating</Text>
             </View>
           </View>
         </View>
 
         <View className="mb-4">
-          <View className="flex-row bg-gray-200 rounded-lg overflow-hidden">
+          <View className="flex-row bg-gray-800 rounded-lg overflow-hidden">
             <TouchableOpacity
               className={`flex-1 py-3 items-center ${
-                activeTab === "performance" ? "bg-white" : ""
+                activeTab === "performance" ? "bg-gray-700" : ""
               }`}
               onPress={() => setActiveTab("performance")}
             >
               <MaterialCommunityIcons
                 name="chart-bar"
                 size={20}
-                color={activeTab === "performance" ? "#3b82f6" : "#6b7280"}
+                color={activeTab === "performance" ? "#FFD86B" : "white"}
               />
               <Text
                 className={`text-xs mt-1 ${
                   activeTab === "performance"
-                    ? "text-primary font-medium"
-                    : "text-gray-500"
+                    ? "text-[#FFD86B] font-medium"
+                    : "text-gray-300"
                 }`}
               >
                 Performance
@@ -70,20 +81,20 @@ const AccountScreen = () => {
             </TouchableOpacity>
             <TouchableOpacity
               className={`flex-1 py-3 items-center ${
-                activeTab === "earnings" ? "bg-white" : ""
+                activeTab === "earnings" ? "bg-gray-700" : ""
               }`}
               onPress={() => setActiveTab("earnings")}
             >
               <MaterialCommunityIcons
                 name="currency-usd"
                 size={20}
-                color={activeTab === "earnings" ? "#3b82f6" : "#6b7280"}
+                color={activeTab === "earnings" ? "#FFD86B" : "white"}
               />
               <Text
                 className={`text-xs mt-1 ${
                   activeTab === "earnings"
-                    ? "text-primary font-medium"
-                    : "text-gray-500"
+                    ? "text-[#FFD86B] font-medium"
+                    : "text-gray-300"
                 }`}
               >
                 Earnings
@@ -91,20 +102,20 @@ const AccountScreen = () => {
             </TouchableOpacity>
             <TouchableOpacity
               className={`flex-1 py-3 items-center ${
-                activeTab === "profile" ? "bg-white" : ""
+                activeTab === "profile" ? "bg-gray-700" : ""
               }`}
               onPress={() => setActiveTab("profile")}
             >
               <MaterialCommunityIcons
                 name="account"
                 size={20}
-                color={activeTab === "profile" ? "#3b82f6" : "#6b7280"}
+                color={activeTab === "profile" ? "#FFD86B" : "white"}
               />
               <Text
                 className={`text-xs mt-1 ${
                   activeTab === "profile"
-                    ? "text-primary font-medium"
-                    : "text-gray-500"
+                    ? "text-[#FFD86B] font-medium"
+                    : "text-gray-300"
                 }`}
               >
                 Profile
@@ -112,20 +123,20 @@ const AccountScreen = () => {
             </TouchableOpacity>
             <TouchableOpacity
               className={`flex-1 py-3 items-center ${
-                activeTab === "vehicle" ? "bg-white" : ""
+                activeTab === "vehicle" ? "bg-gray-700" : ""
               }`}
               onPress={() => setActiveTab("vehicle")}
             >
               <MaterialCommunityIcons
                 name="truck"
                 size={20}
-                color={activeTab === "vehicle" ? "#3b82f6" : "#6b7280"}
+                color={activeTab === "vehicle" ? "#FFD86B" : "white"}
               />
               <Text
                 className={`text-xs mt-1 ${
                   activeTab === "vehicle"
-                    ? "text-primary font-medium"
-                    : "text-gray-500"
+                    ? "text-[#FFD86B] font-medium"
+                    : "text-gray-300"
                 }`}
               >
                 Vehicle
@@ -133,22 +144,23 @@ const AccountScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {activeTab === "performance" && <PerformanceMetrics />}
-          {activeTab === "earnings" && <EarningsInfo />}
-          {activeTab === "profile" && <ProfileSettings />}
-          {activeTab === "vehicle" && <VehicleInfo />}
+          <View className="bg-gray-800 rounded-lg p-4 mt-2">
+            {activeTab === "performance" && <PerformanceMetrics />}
+            {activeTab === "earnings" && <EarningsInfo />}
+            {activeTab === "profile" && <ProfileSettings />}
+            {activeTab === "vehicle" && <VehicleInfo />}
+          </View>
         </View>
 
-        <View className="items-center">
-          <Button
-            mode="outlined"
-            icon="logout"
-            textColor="#ef4444"
+        {/* <View className="items-center">
+          <TouchableOpacity
+            className="flex-row items-center border border-red-500 rounded-lg px-4 py-2"
             onPress={() => logout()}
           >
-            Sign Out
-          </Button>
-        </View>
+            <MaterialCommunityIcons name="logout" size={20} color="#ef4444" />
+            <Text className="ml-2 text-red-500 font-medium">Sign Out</Text>
+          </TouchableOpacity>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
   );
