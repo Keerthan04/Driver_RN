@@ -104,7 +104,7 @@ export default function DeliveryMap({ deliveryId }: { deliveryId: string }) {
 
       // const ApiKey = process.env.GOOGLE_MAPS_API_KEY as string;
       const ApiKey = Constants?.expoConfig?.extra?.googleMapsApiKey as string;
-      // console.log(ApiKey);
+      console.log(ApiKey);
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${ApiKey}&mode=driving`;
 
       const res = await fetch(url);

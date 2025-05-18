@@ -1,4 +1,4 @@
-package com.driverrnapp
+package com.anonymous.driver_rn_app
 
 import android.app.Application
 import android.content.res.Configuration

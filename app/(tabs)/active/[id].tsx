@@ -2,11 +2,11 @@ import CustomerInfo from "@/components/ui/Active/CustomerInfo";
 import DeliveryInfo from "@/components/ui/Active/DeliveryInfo";
 import DeliveryMap from "@/components/ui/Active/DeliveryMap";
 import { deliveries } from "@/Lib/sampleDeliveries";
-import { Delivery } from "@/types";
+// import { Delivery } from "@/types";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Link, useLocalSearchParams } from "expo-router";
 import { Text, View, ScrollView } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+// import MapView, { Marker } from "react-native-maps";
 import { Button } from "react-native-paper";
 const sampleCustomer = {
   id: "CUST-5678",
@@ -44,7 +44,7 @@ export default function Active() {
           </Text>
         </View>
       </View>
-      {/* <DeliveryMap deliveryId={delivery.id} /> */}
+      <DeliveryMap deliveryId={delivery.id} />
       <DeliveryInfo delivery={delivery} />
       <CustomerInfo customer={sampleCustomer} />
       <Button
