@@ -12,7 +12,7 @@ import DeliveryQueue from "../ui/DeliveryQueue";
 import WeatherAlert from "../ui/WeatherAlert";
 // import NotificationBell from "../../components/NotificationBell";
 
-const DashboardScreen = ({ navigation }: any) => {
+const DashboardScreen = () => {
   const { user } = useAuth();
   const [isAvailable, setIsAvailable] = useState(true);
   //   const [locationPermission, setLocationPermission] = useState(false);
@@ -58,7 +58,7 @@ const DashboardScreen = ({ navigation }: any) => {
             <Text style={styles.cardTitle}>Current Delivery Queue</Text>
             <Badge style={styles.badge}>5 Packages</Badge>
           </View>
-          <DeliveryQueue navigation={navigation} />
+          <DeliveryQueue />
         </Surface>
 
         {/* for now no need of live location tracking as in route we have it */}
@@ -103,7 +103,7 @@ const DashboardScreen = ({ navigation }: any) => {
             </View>
           </View>
         </Surface> */}
-        <WeatherAlert/>
+        {/* <WeatherAlert/> */}
 
         {/* To do the dashboard in proper way */}
         <Surface className=" p-4 m-2 rounded-lg ">

@@ -10,7 +10,7 @@ export default {
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "driverrnapp",
+    scheme: "driverrnappnew",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {

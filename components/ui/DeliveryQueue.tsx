@@ -2,52 +2,9 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
+import { deliveries } from "@/Lib/sampleDeliveries";
+import { useRouter } from "expo-router";
 
-type Delivery = {
-  id: string;
-  address: string;
-  time: string;
-  priority: "high" | "medium" | "low";
-  status: "pending" | "in-progress" | "completed";
-};
-
-const deliveries: Delivery[] = [
-  {
-    id: "DEL-1234",
-    address: "123 Main St, Apt 4B",
-    time: "10:30 AM",
-    priority: "high",
-    status: "in-progress",
-  },
-  {
-    id: "DEL-1235",
-    address: "456 Oak Ave",
-    time: "11:15 AM",
-    priority: "medium",
-    status: "pending",
-  },
-  {
-    id: "DEL-1236",
-    address: "789 Pine Blvd, Suite 3",
-    time: "12:00 PM",
-    priority: "medium",
-    status: "pending",
-  },
-  {
-    id: "DEL-1237",
-    address: "321 Cedar Ln",
-    time: "1:30 PM",
-    priority: "low",
-    status: "pending",
-  },
-  {
-    id: "DEL-1238",
-    address: "654 Maple Dr",
-    time: "2:45 PM",
-    priority: "low",
-    status: "pending",
-  },
-];
 
 const priorityColors = {
   high: { bg: "#fee2e2", text: "#b91c1c" },
@@ -55,20 +12,23 @@ const priorityColors = {
   low: { bg: "#dcfce7", text: "#166534" },
 };
 
-interface DeliveryQueueProps {
-  navigation: any;
-}
 
-const DeliveryQueue = ({ navigation }: DeliveryQueueProps) => {
+
+const DeliveryQueue = () => {
+  const router = useRouter();
+  const handleNavigation = (id: string) => {
+    router.push({
+      pathname: "/(tabs)/active/[id]",
+      params: { id: id },
+    });
+  };
   return (
     <View style={styles.container}>
       {deliveries.map((delivery) => (
         <TouchableOpacity
           key={delivery.id}
           style={styles.deliveryItem}
-          onPress={() =>
-            navigation.navigate("DeliveryDetail", { id: delivery.id })
-          }
+          onPress={() => handleNavigation(delivery.id)}
         >
           <View style={styles.deliveryContent}>
             <View style={styles.iconContainer}>
