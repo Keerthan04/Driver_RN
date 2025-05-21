@@ -3,7 +3,7 @@ import { Customer, Delivery } from "@/types";
 export const deliveries: Delivery[] = [
   {
     id: "DEL-1234",
-    address: "Manipal University, Manipal, Karnataka",
+    address: "C-32(B) MIT Quaterse,Manipal, Udupi, Karnataka",
     time: "10:30 AM",
     priority: "high",
     status: "in-progress",

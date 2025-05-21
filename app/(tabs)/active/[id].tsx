@@ -18,8 +18,9 @@ const sampleCustomer = {
 };
 export default function Active() {
   const {id} = useLocalSearchParams();
-  // console.log("Delivery ID:", id);
+  console.log("Delivery ID in id page:", id);
   const delivery = deliveries.find((delivery) => delivery.id === id);
+  console.log("Delivery:", delivery);
   if (!delivery) {
     return (
       <View className="flex-1 items-center justify-center">

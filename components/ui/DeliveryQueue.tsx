@@ -17,6 +17,7 @@ const priorityColors = {
 const DeliveryQueue = () => {
   const router = useRouter();
   const handleNavigation = (id: string) => {
+    console.log("Delivery ID:", id);
     router.push({
       pathname: "/(tabs)/active/[id]",
       params: { id: id },
