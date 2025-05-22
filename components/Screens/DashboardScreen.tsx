@@ -1,17 +1,33 @@
 "use client";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { ScrollView, View, Text, Switch } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../context/AuthContext";
 import DeliveryQueue from "../ui/DeliveryQueue";
 import WeatherAlert from "../ui/WeatherAlert";
+import { startBackgroundLocationTracking } from "@/Lib/location/StartTracking";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DashboardScreen = () => {
   const { user } = useAuth();
   const [isAvailable, setIsAvailable] = useState(true);
 
+  // After successful login to store the driverId in AsyncStorage
+  useEffect(() => {
+    const setDriverId = async () => {
+      await AsyncStorage.setItem("driverId", user?.id || ""); // Store driverId in AsyncStorage
+      console.log("Driver ID stored successfully");
+    };
+    setDriverId();
+  }, [user]);
+
+
+  //to start the background location tracking(dint test for now but it should work)
+  useEffect(() => {
+    startBackgroundLocationTracking();
+  }, []);
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <ScrollView contentContainerStyle={{ paddingBottom: 80 }} className="p-4">
