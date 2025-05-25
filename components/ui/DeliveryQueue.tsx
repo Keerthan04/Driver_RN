@@ -1,10 +1,320 @@
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+// import React from "react";
+// import {
+//   View,
+//   StyleSheet,
+//   TouchableOpacity,
+//   RefreshControl,
+//   FlatList,
+// } from "react-native";
+// import { Text } from "react-native-paper";
+// import { MaterialCommunityIcons } from "@expo/vector-icons";
+// import Feather from "@expo/vector-icons/Feather";
+// import { useRouter } from "expo-router";
+// import { DeliveryQueueForDriver } from "@/types";
+
+// const priorityColors = {
+//   high: { bg: "#fee2e2", text: "#b91c1c" },
+//   medium: { bg: "#fef3c7", text: "#92400e" },
+//   low: { bg: "#dcfce7", text: "#166534" },
+// };
+
+// interface DeliveryQueueProps {
+//   deliveryQueue: DeliveryQueueForDriver[];
+//   onRefresh?: () => void;
+//   refreshing?: boolean;
+// }
+
+// const DeliveryQueue: React.FC<DeliveryQueueProps> = ({
+//   deliveryQueue,
+//   onRefresh,
+//   refreshing = false,
+// }) => {
+//   const router = useRouter();
+
+//   const handleNavigation = (id: string) => {
+//     console.log("Navigating to delivery ID:", id);
+//     router.push({
+//       pathname: "/(tabs)/active/[id]",
+//       params: { id: id },
+//     });
+//   };
+
+//   const getPriorityInfo = (priority: number) => {
+//     if (priority >= 7) return { level: "high", label: "High Priority" };
+//     if (priority >= 4) return { level: "medium", label: "Medium Priority" };
+//     return { level: "low", label: "Low Priority" };
+//   };
+//   const formatTime = (timeValue: Date | string) => {
+//     if (!timeValue) return "N/A";
+
+//     // If it's already a Date object
+//     if (timeValue instanceof Date) {
+//       return timeValue.toLocaleTimeString([], {
+//         hour: "2-digit",
+//         minute: "2-digit",
+//       });
+//     }
+
+//     // If it's a string, try to convert to Date
+//     if (typeof timeValue === "string") {
+//       const date = new Date(timeValue);
+//       if (!isNaN(date.getTime())) {
+//         return date.toLocaleTimeString([], {
+//           hour: "2-digit",
+//           minute: "2-digit",
+//         });
+//       }
+//     }
+
+//     return "Invalid time";
+//   };
+//   const renderDeliveryItem = ({
+//     item: delivery,
+//   }: {
+//     item: DeliveryQueueForDriver;
+//   }) => {
+//     const priorityInfo = getPriorityInfo(delivery.priority);
+//     const priorityStyle =
+//       priorityColors[priorityInfo.level as keyof typeof priorityColors];
+
+//     return (
+//       <TouchableOpacity
+//         key={delivery.delivery_id}
+//         style={styles.deliveryItem}
+//         onPress={() => handleNavigation(delivery.delivery_id)}
+//         activeOpacity={0.7}
+//       >
+//         <View style={styles.deliveryContent}>
+//           <View style={styles.iconContainer}>
+//             <Feather name="package" size={20} color="#3b82f6" />
+//           </View>
+
+//           <View style={styles.deliveryInfo}>
+//             <Text style={styles.address} numberOfLines={2}>
+//               {delivery.dropoff_location}
+//             </Text>
+//             <View style={styles.timeContainer}>
+//               <MaterialCommunityIcons
+//                 name="clock-outline"
+//                 size={14}
+//                 color="#d1d5db"
+//               />
+//               <Text style={styles.time}>
+//                 {formatTime(delivery.time_slot?.start_time)} -{" "}
+//                 {formatTime(delivery.time_slot?.end_time)}
+//               </Text>
+//             </View>
+//           </View>
+//         </View>
+
+//         <View style={styles.rightContent}>
+//           <View
+//             style={[
+//               styles.priorityBadge,
+//               { backgroundColor: priorityStyle.bg },
+//             ]}
+//           >
+//             {delivery.priority >= 7 && (
+//               <MaterialCommunityIcons
+//                 name="alert-circle-outline"
+//                 size={12}
+//                 color={priorityStyle.text}
+//               />
+//             )}
+//             <Text style={[styles.priorityText, { color: priorityStyle.text }]}>
+//               {priorityInfo.label}
+//             </Text>
+//           </View>
+
+//           <MaterialCommunityIcons
+//             name="chevron-right"
+//             size={20}
+//             color="#9ca3af"
+//           />
+//         </View>
+//       </TouchableOpacity>
+//     );
+//   };
+
+//   const renderEmptyState = () => (
+//     <View style={styles.emptyContainer}>
+//       <MaterialCommunityIcons
+//         name="package-variant-closed"
+//         size={48}
+//         color="#6b7280"
+//       />
+//       <Text style={styles.emptyTitle}>No deliveries yet</Text>
+//       <Text style={styles.emptySubtitle}>
+//         Your delivery queue is empty. New deliveries will appear here.
+//       </Text>
+//       {onRefresh && (
+//         <TouchableOpacity
+//           style={styles.refreshButton}
+//           onPress={onRefresh}
+//           activeOpacity={0.7}
+//         >
+//           <MaterialCommunityIcons name="refresh" size={16} color="#3b82f6" />
+//           <Text style={styles.refreshButtonText}>Refresh</Text>
+//         </TouchableOpacity>
+//       )}
+//     </View>
+//   );
+
+//   if (deliveryQueue.length === 0) {
+//     return renderEmptyState();
+//   }
+
+//   return (
+//     <FlatList
+//       data={deliveryQueue}
+//       renderItem={renderDeliveryItem}
+//       keyExtractor={(item) => item.delivery_id}
+//       contentContainerStyle={styles.container}
+//       showsVerticalScrollIndicator={false}
+//       scrollEnabled={false}
+//       refreshControl={
+//         onRefresh ? (
+//           <RefreshControl
+//             refreshing={refreshing}
+//             onRefresh={onRefresh}
+//             tintColor="#3b82f6"
+//             colors={["#3b82f6"]}
+//           />
+//         ) : undefined
+//       }
+//       ItemSeparatorComponent={() => <View style={styles.separator} />}
+//     />
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flexGrow: 1,
+//   },
+//   separator: {
+//     height: 12,
+//   },
+//   deliveryItem: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     padding: 16,
+//     borderWidth: 1,
+//     borderColor: "#4b5563",
+//     borderRadius: 12,
+//     backgroundColor: "#374151",
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 3.84,
+//     elevation: 5,
+//   },
+//   deliveryContent: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     flex: 1,
+//   },
+//   iconContainer: {
+//     width: 44,
+//     height: 44,
+//     borderRadius: 22,
+//     backgroundColor: "rgba(59, 130, 246, 0.15)",
+//     justifyContent: "center",
+//     alignItems: "center",
+//     marginRight: 16,
+//     borderWidth: 1,
+//     borderColor: "rgba(59, 130, 246, 0.3)",
+//   },
+//   deliveryInfo: {
+//     flex: 1,
+//     paddingRight: 8,
+//   },
+//   address: {
+//     fontSize: 16,
+//     fontWeight: "600",
+//     color: "#f9fafb",
+//     lineHeight: 20,
+//   },
+//   timeContainer: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     marginTop: 6,
+//   },
+//   time: {
+//     fontSize: 13,
+//     color: "#d1d5db",
+//     marginLeft: 6,
+//     fontWeight: "500",
+//   },
+//   rightContent: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     gap: 12,
+//   },
+//   priorityBadge: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     paddingHorizontal: 10,
+//     paddingVertical: 6,
+//     borderRadius: 16,
+//     gap: 4,
+//     minWidth: 80,
+//     justifyContent: "center",
+//   },
+//   priorityText: {
+//     fontSize: 12,
+//     fontWeight: "600",
+//   },
+//   emptyContainer: {
+//     alignItems: "center",
+//     justifyContent: "center",
+//     paddingVertical: 40,
+//     paddingHorizontal: 20,
+//   },
+//   emptyTitle: {
+//     fontSize: 18,
+//     fontWeight: "600",
+//     color: "#f9fafb",
+//     marginTop: 16,
+//     marginBottom: 8,
+//   },
+//   emptySubtitle: {
+//     fontSize: 14,
+//     color: "#9ca3af",
+//     textAlign: "center",
+//     lineHeight: 20,
+//     marginBottom: 20,
+//   },
+//   refreshButton: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     backgroundColor: "rgba(59, 130, 246, 0.1)",
+//     paddingHorizontal: 16,
+//     paddingVertical: 10,
+//     borderRadius: 8,
+//     borderWidth: 1,
+//     borderColor: "rgba(59, 130, 246, 0.3)",
+//     gap: 6,
+//   },
+//   refreshButtonText: {
+//     color: "#3b82f6",
+//     fontWeight: "600",
+//     fontSize: 14,
+//   },
+// });
+
+// export default DeliveryQueue;
+
+import React from "react";
+import { View, TouchableOpacity, FlatList, RefreshControl } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
-import { deliveries } from "@/Lib/sampleDeliveries";
 import { useRouter } from "expo-router";
-
+import { DeliveryQueueForDriver } from "@/types";
 
 const priorityColors = {
   high: { bg: "#fee2e2", text: "#b91c1c" },
@@ -12,145 +322,100 @@ const priorityColors = {
   low: { bg: "#dcfce7", text: "#166534" },
 };
 
+interface DeliveryQueueProps {
+  deliveryQueue: DeliveryQueueForDriver[];
+  onRefresh?: () => void;
+  refreshing?: boolean;
+}
 
-
-const DeliveryQueue = () => {
+const DeliveryQueue: React.FC<DeliveryQueueProps> = ({
+  deliveryQueue,
+  onRefresh,
+  refreshing = false,
+}) => {
   const router = useRouter();
+
   const handleNavigation = (id: string) => {
-    console.log("Delivery ID:", id);
     router.push({
       pathname: "/(tabs)/active/[id]",
-      params: { id: id },
+      params: { id },
     });
   };
-  return (
-    <View style={styles.container}>
-      {deliveries.map((delivery) => (
-        <TouchableOpacity
-          key={delivery.id}
-          style={styles.deliveryItem}
-          onPress={() => handleNavigation(delivery.id)}
-        >
-          <View style={styles.deliveryContent}>
-            <View style={styles.iconContainer}>
-              <Feather
-                name="package"
-                size={20}
-                color="white"
-              />
-            </View>
-            <View style={styles.deliveryInfo}>
-              <Text style={styles.address}>{delivery.address}</Text>
-              <View style={styles.timeContainer}>
-                <MaterialCommunityIcons
-                  name="clock-outline"
-                  size={12}
-                  color="white"
-                />
-                <Text style={styles.time}>{delivery.time}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.rightContent}>
-            <View
-              style={[
-                styles.priorityBadge,
-                { backgroundColor: priorityColors[delivery.priority].bg },
-              ]}
-            >
-              {delivery.priority === "high" && (
-                <MaterialCommunityIcons
-                  name="alert-circle-outline"
-                  size={12}
-                  color={priorityColors[delivery.priority].text}
-                />
-              )}
-              <Text
-                style={[
-                  styles.priorityText,
-                  { color: priorityColors[delivery.priority].text },
-                ]}
-              >
-                {delivery.priority.charAt(0).toUpperCase() +
-                  delivery.priority.slice(1)}
-              </Text>
-            </View>
+
+  const getPriorityInfo = (priority: number) => {
+    if (priority >= 7) return { level: "high", label: "High Priority" };
+    if (priority >= 4) return { level: "medium", label: "Medium Priority" };
+    return { level: "low", label: "Low Priority" };
+  };
+
+  const formatTime = (time: string | Date) => {
+    const date = typeof time === "string" ? new Date(time) : time;
+    if (isNaN(date.getTime())) return "Invalid time";
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const renderItem = ({ item }: { item: DeliveryQueueForDriver }) => {
+    const { level, label } = getPriorityInfo(item.priority);
+    const colors = priorityColors[level as keyof typeof priorityColors];
+
+    return (
+      <TouchableOpacity
+        className="bg-white p-4 rounded-lg mb-3 shadow-sm"
+        onPress={() => handleNavigation(item.delivery_id)}
+      >
+        <View className="flex-row justify-between items-center mb-1">
+          <Text className="text-lg font-semibold text-gray-800">
+            {item.customer.first_name} {item.customer.last_name}
+          </Text>
+          <Feather name="chevron-right" size={20} color="gray" />
+        </View>
+
+        <Text className="text-sm text-gray-500 mb-2">{item.dropoff_location}</Text>
+
+        <View className="flex-row justify-between items-center">
+          <View className="flex-row items-center gap-2">
             <MaterialCommunityIcons
-              name="chevron-right"
-              size={20}
-              color="white"
+              name="clock-outline"
+              size={18}
+              color="gray"
             />
+            <Text className="text-sm text-gray-600">
+              {formatTime(item.time_slot?.start_time)} -{" "}
+              {formatTime(item.time_slot?.end_time)}
+            </Text>
           </View>
-        </TouchableOpacity>
-      ))}
-    </View>
+
+          <View
+            style={{
+              backgroundColor: colors.bg,
+              paddingHorizontal: 10,
+              paddingVertical: 2,
+              borderRadius: 9999,
+            }}
+          >
+            <Text
+              style={{ color: colors.text, fontSize: 12, fontWeight: "600" }}
+            >
+              {label}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <FlatList
+      data={deliveryQueue}
+      keyExtractor={(item) => item.delivery_id}
+      renderItem={renderItem}
+      refreshControl={
+        onRefresh ? (
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        ) : undefined
+      }
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    gap: 12,
-  },
-  deliveryItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 8,
-    backgroundColor: "#374151",
-    
-  },
-  deliveryContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    backgroundColor: "#374151",
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(59, 130, 246, 0.1)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  deliveryInfo: {
-    flex: 1,
-  },
-  address: {
-    fontWeight: "500",
-    color: "#f3f4f6",
-  },
-  timeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 4,
-  },
-  time: {
-    fontSize: 12,
-    color: "#f3f4f6",
-    marginLeft: 4,
-  },
-  rightContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  priorityBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 4,
-  },
-  priorityText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-});
 
 export default DeliveryQueue;
