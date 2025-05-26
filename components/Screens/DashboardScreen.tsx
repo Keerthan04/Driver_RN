@@ -288,7 +288,7 @@ const DashboardScreen = () => {
       setIsLoading(true);
 
       const mockDriverId = "69ca617c-9259-492f-a73a-e9e351204678";
-      const mockDate = "2025-05-25";
+      const mockDate = "2025-05-27";
       const queue = await DashboardDataFetcher(mockDriverId, mockDate);
 
       setDeliveryQueue(queue);

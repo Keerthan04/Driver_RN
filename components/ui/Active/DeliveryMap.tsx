@@ -1,4 +1,4 @@
-import { DeliveryQueueForDriver } from "@/types";
+import { DeliveryQueueForDriver, DeliveryStatus } from "@/types";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import polyline from "@mapbox/polyline";
 import Constants from "expo-constants";
@@ -20,9 +20,10 @@ interface Coordinates {
 
 interface DeliveryMapProps {
   delivery: DeliveryQueueForDriver | null;
+  setDeliveryStatus: (status: DeliveryStatus) => void;
 }
 
-export default function DeliveryMap({ delivery }: DeliveryMapProps) {
+export default function DeliveryMap({ delivery, setDeliveryStatus }: DeliveryMapProps) {
   const [currentLocation] = useState("Udupi City Bus Stand, Udupi, Karnataka");
   const [eta, setEta] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -146,6 +147,7 @@ export default function DeliveryMap({ delivery }: DeliveryMapProps) {
 
   // Google Maps navigation function (keeping your commented implementation)
   const openGoogleMapsNavigation = () => {
+    setDeliveryStatus(DeliveryStatus.in_progress);
     // const origin = `${originCoords.latitude},${originCoords.longitude}`;
     // const destination = `${destCoords.latitude},${destCoords.longitude}`;
     // console.log("Origin: ", origin);
@@ -314,7 +316,7 @@ export default function DeliveryMap({ delivery }: DeliveryMapProps) {
                 </Text>
               </Text>
             </View>
-            
+
             <View
               className={`px-3 py-1 rounded-full ${getStatusClasses(
                 delivery.status

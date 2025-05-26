@@ -38,7 +38,7 @@ export default function Active() {
         }
 
         const mockDriverId = "69ca617c-9259-492f-a73a-e9e351204678";
-        const mockDate = "2025-05-25";
+        const mockDate = "2025-05-27";
 
         const deliveryData = await DeliveryDetailsFetcher(
           mockDriverId,
@@ -162,9 +162,9 @@ export default function Active() {
     <ScrollView className="flex-1">
       {/* Header */}
       <View className="flex-row items-center p-4  rounded-lg  mt-2 ">
-        <Link href="/(tabs)/active" asChild>
-          <View className="rounded-lg p-2 mr-3 ">
-            <AntDesign name="back" size={24} color="#111827" />
+        <Link href={"/(tabs)/active"}>
+          <View className="rounded-lg p-2 mr-3">
+            <AntDesign name="back" size={32} color="#111827" />
           </View>
         </Link>
         <View className="flex-1">
@@ -179,7 +179,7 @@ export default function Active() {
 
       {/* Content */}
       <View className="gap-2 p-2">
-        <DeliveryMap delivery={deliveryDetails} />
+        <DeliveryMap delivery={deliveryDetails} setDeliveryStatus={setDeliveryStatus}/>
         <DeliveryInfo delivery={deliveryDetails} />
         <CustomerInfo customer={deliveryDetails.customer} />
 

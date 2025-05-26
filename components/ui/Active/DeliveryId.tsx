@@ -14,9 +14,15 @@ const DeliveryId = ({ value, onChangeText, onPressSearch }: DeliveryIdProps) => 
       <View className="flex-col gap-3 w-full mt-2 mb-2">
         <View className="flex-row gap-2 items-center">
           <View className="rounded-lg p-2">
-            <MaterialCommunityIcons name="package-variant" size={24} color="white" />
+            <MaterialCommunityIcons
+              name="package-variant"
+              size={24}
+              color="white"
+            />
           </View>
-          <Text className="text-white text-xl font-bold">Enter Delivery ID</Text>
+          <Text className="text-white text-xl font-bold">
+            Enter Delivery ID
+          </Text>
         </View>
         <Text className="text-white text-lg">
           Enter the delivery ID to view details and track the package
@@ -30,7 +36,7 @@ const DeliveryId = ({ value, onChangeText, onPressSearch }: DeliveryIdProps) => 
           <View className="flex-1">
             <TextInput
               mode="outlined"
-              placeholder="DEL-1234"
+              placeholder="fdd3965e-bcbf-447e-95a5..."
               textColor="black"
               value={value}
               onChangeText={onChangeText}

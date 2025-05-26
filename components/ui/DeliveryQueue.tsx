@@ -336,15 +336,12 @@ const DeliveryQueue: React.FC<DeliveryQueueProps> = ({
   const router = useRouter();
 
   const handleNavigation = (id: string) => {
-    console.log("Navigating to delivery ID:", id);
     // Navigate to the active delivery details page with the given ID
     router.push({
       pathname: "/(tabs)/active/[id]",
       params: { id },
     });
   };
-
-  
 
   const renderItem = ({ item }: { item: DeliveryQueueForDriver }) => {
     const { level, label } = getPriorityInfo(item.priority);

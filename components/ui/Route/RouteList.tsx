@@ -1,128 +1,127 @@
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import { useState } from "react";
+import { formatTime } from "@/Lib/utils";
+import { DeliveryQueueForDriver, DeliveryStatus } from "@/types";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import {  Text, TouchableOpacity, View } from "react-native";
 
-type RouteStop = {
-  id: string;
-  address: string;
-  time: string;
-  status: "completed" | "in-progress" | "pending";
-  isActive: boolean;
-};
+interface RouteListProps {
+  deliveries?: DeliveryQueueForDriver[];
+  onStatusUpdate?: (deliveryId: string, newStatus: DeliveryStatus) => void;
+}
 
-const routeStops: RouteStop[] = [
-  {
-    id: "DEL-1233",
-    address: "987 Elm St",
-    time: "9:15 AM",
-    status: "completed",
-    isActive: false,
-  },
-  {
-    id: "DEL-1234",
-    address: "123 Main St, Apt 4B",
-    time: "10:30 AM",
-    status: "in-progress",
-    isActive: true,
-  },
-  {
-    id: "DEL-1235",
-    address: "456 Oak Ave",
-    time: "11:15 AM",
-    status: "pending",
-    isActive: false,
-  },
-  {
-    id: "DEL-1236",
-    address: "789 Pine Blvd, Suite 3",
-    time: "12:00 PM",
-    status: "pending",
-    isActive: false,
-  },
-  {
-    id: "DEL-1237",
-    address: "321 Cedar Ln",
-    time: "1:30 PM",
-    status: "pending",
-    isActive: false,
-  },
-];
-
-const statusClasses = {
-  completed: "bg-green-700 text-green-200",
-  "in-progress": "bg-blue-700 text-blue-200",
-  pending: "bg-gray-700 text-gray-200",
-};
-
-export function RouteList() {
-  const navigation = useNavigation<any>();
+export function RouteList({ deliveries, onStatusUpdate }: RouteListProps) {
   const [menuVisible, setMenuVisible] = useState<string | null>(null);
-
+  const router = useRouter();
+  const handleNavigation = (id: string) => {
+    // Navigate to the active delivery details page with the given ID
+    router.push({
+      pathname: "/(tabs)/active/[id]",
+      params: { id },
+    });
+  };
   const openMenu = (id: string) => {
     setMenuVisible(menuVisible === id ? null : id);
   };
 
+  const getStatusIcon = (status: DeliveryStatus) => {
+    switch (status) {
+      case DeliveryStatus.completed:
+        return "check-circle";
+      case DeliveryStatus.in_progress:
+        return "map-marker";
+      case DeliveryStatus.cancelled:
+        return "close-circle";
+      default:
+        return "map-marker";
+    }
+  };
+
+  const getStatusText = (status: DeliveryStatus) => {
+    switch (status) {
+      case DeliveryStatus.completed:
+        return "Completed";
+      case DeliveryStatus.in_progress:
+        return "In Progress";
+      case DeliveryStatus.cancelled:
+        return "Cancelled";
+      default:
+        return "Pending";
+    }
+  };
+
+  const handleViewDetails = (deliveryId: string) => {
+    setMenuVisible(null);
+    handleNavigation(deliveryId);
+  };
+
+  if (!deliveries || deliveries.length === 0) {
+    return (
+      <View className="flex-1 items-center justify-center py-8">
+        <MaterialCommunityIcons
+          name="truck-outline"
+          size={48}
+          color="#9CA3AF"
+        />
+        <Text className="text-gray-400 text-center mt-4 text-base">
+          No deliveries scheduled for today
+        </Text>
+      </View>
+    );
+  }
+
   return (
-    //shd do as scrollview
-    <ScrollView className="space-y-4">
-      {routeStops.map((stop) => (
-        <View
-          key={stop.id}
-          className={`p-3 rounded-lg mb-2 border ${
-            stop.isActive ? "border-[#FFD86B] bg-gray-700" : "border-gray-700 bg-gray-700"
+    <View className="gap-2">
+      {deliveries.map((delivery) => (
+        <TouchableOpacity
+          key={delivery.delivery_id}
+          onPress={() => handleViewDetails(delivery.delivery_id)}
+          className={`p-4 rounded-lg ${
+            delivery.status === DeliveryStatus.in_progress
+              ? "border-2 border-yellow-400 bg-gray-800"
+              : "bg-gray-800"
           }`}
         >
           <View className="flex-row justify-between items-center">
             <View className="flex-row items-center flex-1">
-              <View
-                className={`w-10 h-10 rounded-full ${
-                  stop.isActive ? "bg-gray-600" : "bg-gray-800"
-                } justify-center items-center mr-3`}
-              >
-                {stop.status === "completed" ? (
-                  <MaterialCommunityIcons
-                    name="check-circle"
-                    size={20}
-                    color={stop.isActive ? "#FFD86B" : "white"}
-                  />
-                ) : (
-                  <MaterialCommunityIcons
-                    name="map-marker"
-                    size={20}
-                    color={stop.isActive ? "#FFD86B" : "white"}
-                  />
-                )}
+              <View className="w-10 h-10 rounded-full bg-gray-600 justify-center items-center mr-3">
+                <MaterialCommunityIcons
+                  name={getStatusIcon(delivery.status)}
+                  size={20}
+                  color={
+                    delivery.status === DeliveryStatus.completed
+                      ? "#10B981"
+                      : "white"
+                  }
+                />
               </View>
-              <View>
-                <Text className="font-medium text-white">{stop.address}</Text>
+
+              <View className="flex-1">
+                <Text className="font-semibold text-white text-base">
+                  {delivery.dropoff_location}
+                </Text>
                 <View className="flex-row items-center mt-1">
                   <MaterialCommunityIcons
                     name="clock-outline"
                     size={12}
-                    color="white"
+                    color="#9CA3AF"
                   />
-                  <Text className="text-xs text-gray-300 ml-1">
-                    {stop.time}
+                  <Text className="text-sm text-gray-400 ml-1">
+                    {formatTime(delivery.time_slot.start_time)}
                   </Text>
                 </View>
               </View>
             </View>
-            <View className="flex-row items-center space-x-2">
-              <View
-                className={`px-2 py-1 rounded-full bg-gray-800
-                }`}
-              >
+
+            <View className="flex-row items-center space-x-3">
+              <View className="bg-gray-700 px-3 py-1 rounded-full">
                 <Text className="text-xs font-medium text-white">
-                  {stop.status === "completed"
-                    ? "Completed"
-                    : stop.status === "in-progress"
-                    ? "In Progress"
-                    : "Pending"}
+                  {getStatusText(delivery.status)}
                 </Text>
               </View>
+
               <TouchableOpacity
-                onPress={() => openMenu(stop.id)}
+                onPress={() => openMenu(delivery.delivery_id)}
                 className="w-8 h-8 justify-center items-center"
               >
                 <MaterialCommunityIcons
@@ -133,34 +132,44 @@ export function RouteList() {
               </TouchableOpacity>
             </View>
           </View>
-          
-          {menuVisible === stop.id && (
-            <View className="mt-2 bg-gray-800 rounded-md overflow-hidden">
+
+          {/* Simple Dropdown Menu */}
+          {menuVisible === delivery.delivery_id && (
+            <View className="mt-3 bg-gray-700 rounded-lg overflow-hidden">
               <TouchableOpacity
-                onPress={() => {
-                  setMenuVisible(null);
-                  navigation.navigate("DeliveryDetail", { id: stop.id });
-                }}
-                className="px-4 py-2 border-b border-gray-700"
+                onPress={() => handleViewDetails(delivery.delivery_id)}
+                className="px-4 py-3 border-b border-gray-600"
               >
-                <Text className="text-white">View Details</Text>
+                <Text className="text-white font-medium">View Details</Text>
               </TouchableOpacity>
+
+              {delivery.status !== DeliveryStatus.completed && (
+                <TouchableOpacity
+                  onPress={() => {
+                    onStatusUpdate?.(
+                      delivery.delivery_id,
+                      DeliveryStatus.cancelled
+                    );
+                    setMenuVisible(null);
+                  }}
+                  className="px-4 py-3 border-b border-gray-600"
+                >
+                  <Text className="text-yellow-500 font-medium">
+                    Skip Delivery
+                  </Text>
+                </TouchableOpacity>
+              )}
+
               <TouchableOpacity
                 onPress={() => setMenuVisible(null)}
-                className="px-4 py-2 border-b border-gray-700"
+                className="px-4 py-3"
               >
-                <Text className="text-white">Skip Delivery</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setMenuVisible(null)}
-                className="px-4 py-2"
-              >
-                <Text className="text-white">Report Issue</Text>
+                <Text className="text-red-400 font-medium">Report Issue</Text>
               </TouchableOpacity>
             </View>
           )}
-        </View>
+        </TouchableOpacity>
       ))}
-    </ScrollView>
+    </View>
   );
 }
