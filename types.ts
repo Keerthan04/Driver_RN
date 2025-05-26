@@ -482,6 +482,7 @@ export type DeliveryQueueForDriver = {
     start_time: Date;
     end_time: Date;
   };
+  driver: Partial<Driver>;
 };
 export interface DeliveryQueryResponse extends ResponseData{
   data: DeliveryQueueForDriver[] | null;

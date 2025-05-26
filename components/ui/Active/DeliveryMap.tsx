@@ -1,122 +1,150 @@
-import { Delivery } from "@/types";
+import { DeliveryQueueForDriver } from "@/types";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import polyline from "@mapbox/polyline";
 import Constants from "expo-constants";
-import React, { useEffect, useState } from "react";
-import { Linking, Platform, Text, TouchableOpacity, View } from "react-native";
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
+import React, { useEffect, useState, useCallback } from "react";
+import { Linking, Text, TouchableOpacity, View, Alert } from "react-native";
+import MapView, {
+  Marker,
+  Polyline,
+  PROVIDER_GOOGLE,
+  Region,
+} from "react-native-maps";
 import { Button, Card } from "react-native-paper";
-import { deliveries } from "@/Lib/sampleDeliveries";
-export default function DeliveryMap({ deliveryId }: { deliveryId: string }) {
+import { formatTime, getPriorityInfo, getStatusClasses, getStatusLabel, getStatusTextClasses } from "@/Lib/utils";
+
+interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
+interface DeliveryMapProps {
+  delivery: DeliveryQueueForDriver | null;
+}
+
+export default function DeliveryMap({ delivery }: DeliveryMapProps) {
   const [currentLocation] = useState("Udupi City Bus Stand, Udupi, Karnataka");
   const [eta, setEta] = useState("");
-  const [region, setRegion] = useState({
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Map state
+  const [region, setRegion] = useState<Region>({
     latitude: 13.3409, // Default Udupi latitude
     longitude: 74.7421, // Default Udupi longitude
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
-  const [routeCoords, setRouteCoords] = useState<
-    { latitude: number; longitude: number }[]
-  >([]);
-  const [destinationCoordinates, setDestinationCoords] = useState<
-    { latitude: number; longitude: number }[]
-  >([]);
-  const [originCoords, setOriginCoords] = useState({
-    latitude: 13.3409,
-    longitude: 74.7421,
-  });
-  const [destCoords, setDestCoords] = useState({
-    latitude: 13.3409,
-    longitude: 74.7421,
-  });
 
-  const delivery = deliveries.find((d) => d.id === deliveryId) as Delivery;
-  console.log("Delivery ", delivery);
-  console.log("Delivery ID ", deliveryId);
-  // const delivery = deliveries[1];
-  useEffect(() => {
-    const fetchRoute = async () => {
+  // Route and coordinates state
+  const [routeCoords, setRouteCoords] = useState<Coordinates[]>([]);
+  const [originCoords, setOriginCoords] = useState<Coordinates>({
+    latitude: 13.3409,
+    longitude: 74.7421,
+  });
+  const [destinationCoords, setDestinationCoords] =
+    useState<Coordinates | null>(null);
+
+  // Fetch route and coordinates
+  const fetchRoute = useCallback(async () => {
+    if (!delivery?.dropoff_location) return;
+
+    try {
+      setIsLoading(true);
+
       const origin = encodeURIComponent(currentLocation);
-      const destination = encodeURIComponent(delivery.address);
-      const originCoords = await getCoordinates(origin);
-      const destinationCoords = await getCoordinates(destination);
-      if (originCoords && destinationCoords) {
+      const destination = encodeURIComponent(delivery.dropoff_location);
+
+      // Get coordinates for both origin and destination
+      const [originCoordsResult, destinationCoordsResult] = await Promise.all([
+        getCoordinates(currentLocation),
+        getCoordinates(delivery.dropoff_location),
+      ]);
+
+      if (originCoordsResult && destinationCoordsResult) {
+        setOriginCoords(originCoordsResult);
+        setDestinationCoords(destinationCoordsResult);
+
+        // Update map region to show both points
+        const centerLat =
+          (originCoordsResult.latitude + destinationCoordsResult.latitude) / 2;
+        const centerLng =
+          (originCoordsResult.longitude + destinationCoordsResult.longitude) /
+          2;
+
+        // Calculate appropriate delta to show both points
+        const latDiff = Math.abs(
+          originCoordsResult.latitude - destinationCoordsResult.latitude
+        );
+        const lngDiff = Math.abs(
+          originCoordsResult.longitude - destinationCoordsResult.longitude
+        );
+
         setRegion({
-          latitude: (originCoords.latitude + destinationCoords.latitude) / 2,
-          longitude: (originCoords.longitude + destinationCoords.longitude) / 2,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
+          latitude: centerLat,
+          longitude: centerLng,
+          latitudeDelta: Math.max(latDiff * 1.5, 0.01), // Add padding and minimum zoom
+          longitudeDelta: Math.max(lngDiff * 1.5, 0.01),
         });
-        setDestinationCoords([destinationCoords]);
-        setOriginCoords(originCoords);
-        setDestCoords(destinationCoords);
       }
 
-      // const ApiKey = process.env.GOOGLE_MAPS_API_KEY as string;
-      const ApiKey = Constants?.expoConfig?.extra?.googleMapsApiKey as string;
-      // console.log(ApiKey);
-      const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${ApiKey}&mode=driving`;
+      // Fetch route from Google Directions API
+      const apiKey = Constants?.expoConfig?.extra?.googleMapsApiKey as string;
 
-      const res = await fetch(url);
-      const json = await res.json();
-      // console.log(json);
+      if (!apiKey) {
+        console.error("Google Maps API key not found");
+        return;
+      }
 
-      if (json.routes.length) {
-        const points = polyline.decode(json.routes[0].overview_polyline.points);
-        // console.log(points);
-        const coords = points.map(([lat, lng]) => ({
+      const directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${apiKey}&mode=driving`;
+
+      const response = await fetch(directionsUrl);
+      const data = await response.json();
+
+      if (data.status === "OK" && data.routes?.length > 0) {
+        const points = polyline.decode(data.routes[0].overview_polyline.points);
+        const coords = points.map(([lat, lng]: [number, number]) => ({
           latitude: lat,
           longitude: lng,
         }));
         setRouteCoords(coords);
-      }
-    };
 
-    fetchRoute();
-  }, [currentLocation, delivery.address]);
+        // Extract duration for ETA
+        if (data.routes[0].legs?.[0]?.duration?.text) {
+          setEta(data.routes[0].legs[0].duration.text);
+        }
+      } else {
+        console.error("Directions API error:", data.status, data.error_message);
+      }
+    } catch (error) {
+      console.error("Error fetching route:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentLocation, delivery?.dropoff_location]);
 
   useEffect(() => {
-    // Simulate different ETAs based on delivery priority
-    const etaTimes = {
-      high: "10 minutes",
-      medium: "15 minutes",
-      low: "25 minutes",
-    };
-    setEta(etaTimes[delivery.priority]);
+    fetchRoute();
+  }, [fetchRoute]);
 
-    // In a real app, you would geocode the addresses to get coordinates
-    // This is just placeholder logic
-  }, [delivery]);
+  // Set default ETA based on priority if no route data
+  useEffect(() => {
+    if (!delivery) return;
 
-  const getPriorityClasses = (priority: "high" | "medium" | "low") => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100";
-      case "medium":
-        return "bg-yellow-100";
-      case "low":
-        return "bg-green-100";
-      default:
-        return "bg-green-100";
+    if (!eta) {
+      const etaTimes = {
+        high: "10 minutes",
+        medium: "15 minutes",
+        low: "25 minutes",
+      };
+      const level = getPriorityInfo(delivery.priority).level as
+        | "high"
+        | "medium"
+        | "low";
+      setEta(etaTimes[level]);
     }
-  };
+  }, [delivery, eta]);
 
-  const getPriorityTextClasses = (priority: "high" | "medium" | "low") => {
-    switch (priority) {
-      case "high":
-        return "text-red-800";
-      case "medium":
-        return "text-yellow-800";
-      case "low":
-        return "text-green-800";
-      default:
-        return "text-green-800";
-    }
-  };
-  //!IMP -> this emulator direct location taking so shd see
-  // Function to open Google Maps navigation
-  // This function will be called when the user clicks the "Start Delivery" button
+  // Google Maps navigation function (keeping your commented implementation)
   const openGoogleMapsNavigation = () => {
     // const origin = `${originCoords.latitude},${originCoords.longitude}`;
     // const destination = `${destCoords.latitude},${destCoords.longitude}`;
@@ -147,103 +175,41 @@ export default function DeliveryMap({ deliveryId }: { deliveryId: string }) {
     //     Linking.openURL(webUrl);
     //     console.error("Error opening navigation:", err);
     //   });
-    // const url =
-    //   Platform.OS === "ios"
-    //     ? `comgooglemaps://?saddr=${origin}&daddr=${destination}&directionsmode=driving`
-    //     : `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving&dir_action=navigate`;
 
-    // Linking.openURL(url).catch((err) =>
-    //   console.error("An error occurred", err)
-    // );
-    const destination = "37.4258,-122.0800"; // Shoreline Amphitheatre
+    if (!destinationCoords) {
+      Alert.alert("Error", "Destination coordinates not available");
+      return;
+    }
+
+    const destination = `${destinationCoords.latitude},${destinationCoords.longitude}`;
     const url = `google.navigation:q=${destination}&mode=d`;
-    Linking.openURL(url);
 
-
-    Linking.openURL(url).catch((err) =>
-      console.error("Failed to launch navigation:", err)
-    );
+    Linking.openURL(url).catch((err) => {
+      console.error("Failed to launch navigation:", err);
+      // Fallback to web Google Maps
+      const webUrl = `https://www.google.com/maps/dir/?api=1&origin=${originCoords.latitude},${originCoords.longitude}&destination=${destination}&travelmode=driving`;
+      Linking.openURL(webUrl);
+    });
   };
-  // const openGoogleMapsNavigation = () => {
-  //   // Make sure origin and destination coordinates are explicitly defined
-  //   // If your coordinates are stored elsewhere, make sure to use them properly
 
-  //   // Example for Udupi coordinates (you should replace with your actual values)
-  //   // Udupi city center coordinates as an example
-  //   const originCoords = {
-  //     latitude: 13.3408807,
-  //     longitude: 74.7421427,
-  //   };
-
-  //   // Destination example - Manipal in Udupi district
-  //   const destCoords = {
-  //     latitude: 13.3554792,
-  //     longitude: 74.70444250000001,
-  //   };
-
-  //   // Format the coordinates properly for the URLs
-  //   const origin = `${originCoords.latitude},${originCoords.longitude}`;
-  //   const destination = `${destCoords.latitude},${destCoords.longitude}`;
-
-  //   console.log(`Attempting navigation from ${origin} to ${destination}`);
-
-  //   // When running in emulator, we might want to bypass device location
-  //   // and force our specific coordinates
-  //   if (Platform.OS === "android") {
-  //     // For Android emulator, we can use the google.navigation URI scheme
-  //     // or fall back to the web URL which works better in emulator
-  //     const navigationUrl = `google.navigation:q=${destCoords.latitude},${destCoords.longitude}`;
-  //     const webFallbackUrl = `https://www.google.com/maps/dir/${origin}/${destination}/`;
-
-  //     Linking.canOpenURL(navigationUrl)
-  //       .then((supported) => {
-  //         if (supported) {
-  //           return Linking.openURL(navigationUrl);
-  //         } else {
-  //           console.log(
-  //             "Native navigation not supported in emulator, using web URL"
-  //           );
-  //           return Linking.openURL(webFallbackUrl);
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.error("Error opening Maps:", err);
-  //         // Fallback option that always works in emulator
-  //         Linking.openURL(webFallbackUrl);
-  //       });
-  //   } else if (Platform.OS === "ios") {
-  //     // For iOS emulator
-  //     Linking.canOpenURL("comgooglemaps://")
-  //       .then((hasGoogleMaps) => {
-  //         if (hasGoogleMaps) {
-  //           // Google Maps installed
-  //           Linking.openURL(
-  //             `comgooglemaps://?saddr=${origin}&daddr=${destination}&directionsmode=driving&navigate=yes`
-  //           );
-  //         } else {
-  //           // Apple Maps fallback
-  //           Linking.openURL(
-  //             `maps://?saddr=${origin}&daddr=${destination}&dirflg=d&t=m`
-  //           );
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.error("Error opening Maps:", err);
-  //         // Web fallback that works in emulator
-  //         Linking.openURL(
-  //           `https://www.google.com/maps/dir/${origin}/${destination}/`
-  //         );
-  //       });
-  //   }
-  // };
-
+  if (!delivery) {
+    return (
+      <View className="flex-1 w-full px-2">
+        <Card className="overflow-hidden rounded-lg my-2 shadow-lg">
+          <View
+            style={{ height: 200 }}
+            className="items-center justify-center bg-gray-50"
+          >
+            <Text className="text-gray-500">No delivery data available</Text>
+          </View>
+        </Card>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 w-full px-2">
       <Card className="overflow-hidden rounded-lg my-2 shadow-lg">
-        {/* should have a height of 320px atleast to work so that was the problem 
-        IMP : make the recenter button also if can a google maps button to open the navigation there if we can or our own wala also
-        */}
         <View style={{ height: 420 }}>
           <MapView
             style={{ flex: 1 }}
@@ -254,31 +220,37 @@ export default function DeliveryMap({ deliveryId }: { deliveryId: string }) {
             showsCompass={true}
             zoomEnabled={true}
             zoomControlEnabled={true}
+            loadingEnabled={isLoading}
           >
+            {/* Origin Marker */}
             <Marker
-              coordinate={{
-                latitude:
-                  destinationCoordinates[0]?.latitude || region.latitude,
-                longitude:
-                  destinationCoordinates[0]?.longitude || region.longitude,
-              }}
-              title="Delivery Location"
-              description={delivery.address}
-            />
-            <Polyline
-              coordinates={routeCoords}
-              strokeWidth={4}
-              strokeColor="#2563eb"
-            />
-            <Marker
-              coordinate={{
-                latitude: routeCoords[0]?.latitude || region.latitude,
-                longitude: routeCoords[0]?.longitude || region.longitude,
-              }}
-              title="Origin"
+              coordinate={originCoords}
+              title="Your Location"
               description={currentLocation}
-              pinColor="#111827"
+              pinColor="blue"
+              identifier="origin"
             />
+
+            {/* Destination Marker */}
+            {destinationCoords && (
+              <Marker
+                coordinate={destinationCoords}
+                title="Delivery Location"
+                description={delivery.dropoff_location}
+                pinColor="red"
+                identifier="destination"
+              />
+            )}
+
+            {/* Route Polyline */}
+            {routeCoords.length > 0 && (
+              <Polyline
+                coordinates={routeCoords}
+                strokeWidth={4}
+                strokeColor="#2563eb"
+                lineDashPattern={[1]}
+              />
+            )}
           </MapView>
         </View>
 
@@ -286,69 +258,74 @@ export default function DeliveryMap({ deliveryId }: { deliveryId: string }) {
           <View className="flex-col justify-between gap-2 mb-4">
             <View className="flex-row items-center">
               <Ionicons name="location" size={20} color="#2563eb" />
-              <View className="ml-2">
-                <Text className="font-bold text-base">{delivery.address}</Text>
+              <View className="ml-2 flex-1">
+                <Text className="font-bold text-base" numberOfLines={2}>
+                  {delivery.dropoff_location}
+                </Text>
                 <Text className="text-xs text-gray-600">
-                  Delivery #{delivery.id}
+                  Delivery #{delivery.delivery_id}
                 </Text>
               </View>
             </View>
-            <View className=" w-full p-2 flex-row justify-between items-center rounded-lg">
+
+            <View className="w-full p-2 flex-row justify-between items-center rounded-lg">
               <View className="flex-row items-center">
                 <Ionicons name="time" size={20} color="#16a34a" />
-                <Text className="ml-1 font-medium">ETA: {eta}</Text>
+                <Text className="ml-1 font-medium">
+                  ETA: {isLoading ? "Calculating..." : eta}
+                </Text>
               </View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    openGoogleMapsNavigation();
-                  }}
+
+              <TouchableOpacity
+                onPress={openGoogleMapsNavigation}
+                disabled={!destinationCoords}
+              >
+                <Button
+                  mode="elevated"
+                  className="rounded-lg"
+                  buttonColor="#FFD86B"
+                  disabled={!destinationCoords}
+                  contentStyle={{ paddingHorizontal: 4, paddingVertical: 4 }}
                 >
-                  <Button
-                    mode="elevated"
-                    className="w-full rounded-lg items-center justify-center p-2 mt-3 mb-3"
-                    buttonColor="#FFD86B"
-                  >
-                    <View className="flex-row items-center justify-center">
-                      <AntDesign name="checkcircleo" size={15} color="black" />
-                      <Text className="text-black font-semibold text-medium ml-2">
-                        Start Delivery
-                      </Text>
-                    </View>
-                  </Button>
-                </TouchableOpacity>
-              </View>
+                  <View className="flex-row items-center justify-center">
+                    <AntDesign name="enviromento" size={16} color="black" />
+                    <Text className="text-black font-semibold text-sm ml-2">
+                      Start Navigation
+                    </Text>
+                  </View>
+                </Button>
+              </TouchableOpacity>
             </View>
           </View>
 
           <View className="mt-4 flex-row justify-between items-center">
-            <View>
+            <View className="flex-1 mr-4">
               <Text className="text-xs text-gray-600">
                 From:{" "}
                 <Text className="font-medium text-gray-700">
                   {currentLocation}
                 </Text>
               </Text>
-              <Text className="text-xs text-gray-600">
+              <Text className="text-xs text-gray-600 mt-1">
                 Scheduled for:{" "}
                 <Text className="font-medium text-gray-700">
-                  {delivery.time}
+                  {formatTime(delivery.time_slot.start_time)} -{" "}
+                  {formatTime(delivery.time_slot.end_time)}
                 </Text>
               </Text>
             </View>
+            
             <View
-              className={`px-3 py-1 rounded-full ${getPriorityClasses(
-                delivery.priority
+              className={`px-3 py-1 rounded-full ${getStatusClasses(
+                delivery.status
               )}`}
             >
               <Text
-                className={`text-xs font-medium ${getPriorityTextClasses(
-                  delivery.priority
+                className={`text-xs font-medium ${getStatusTextClasses(
+                  delivery.status
                 )}`}
               >
-                {delivery.priority.charAt(0).toUpperCase() +
-                  delivery.priority.slice(1)}{" "}
-                Priority
+                {getStatusLabel(delivery.status)}
               </Text>
             </View>
           </View>
@@ -358,25 +335,29 @@ export default function DeliveryMap({ deliveryId }: { deliveryId: string }) {
   );
 }
 
-const getCoordinates = async (address: string) => {
-  console.log("Address: ", address);
-  const apiKey = Constants?.expoConfig?.extra?.googleMapsApiKey; // or from Constants.manifest.extra.googleMapsApiKey if using expo-constants
-  const encodedAddress = encodeURIComponent(address);
+const getCoordinates = async (address: string): Promise<Coordinates | null> => {
+  const apiKey = Constants?.expoConfig?.extra?.googleMapsApiKey;
 
+  if (!apiKey) {
+    console.error("Google Maps API key not found");
+    return null;
+  }
+
+  const encodedAddress = encodeURIComponent(address);
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${apiKey}`;
 
   try {
     const response = await fetch(url);
     const data = await response.json();
 
-    if (data.status === "OK") {
+    if (data.status === "OK" && data.results?.length > 0) {
       const location = data.results[0].geometry.location;
       return {
         latitude: location.lat,
         longitude: location.lng,
       };
     } else {
-      console.error("Geocoding error:", data.status);
+      console.error("Geocoding error:", data.status, data.error_message);
       return null;
     }
   } catch (error) {

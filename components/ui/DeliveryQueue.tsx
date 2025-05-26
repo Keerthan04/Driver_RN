@@ -308,13 +308,13 @@
 
 // export default DeliveryQueue;
 
-import React from "react";
-import { View, TouchableOpacity, FlatList, RefreshControl } from "react-native";
-import { Text } from "react-native-paper";
+import { getPriorityInfo, formatTime } from "@/Lib/utils";
+import { DeliveryQueueForDriver } from "@/types";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
-import { DeliveryQueueForDriver } from "@/types";
+import React from "react";
+import { FlatList, RefreshControl, TouchableOpacity, View, Text} from "react-native";
 
 const priorityColors = {
   high: { bg: "#fee2e2", text: "#b91c1c" },
@@ -336,23 +336,15 @@ const DeliveryQueue: React.FC<DeliveryQueueProps> = ({
   const router = useRouter();
 
   const handleNavigation = (id: string) => {
+    console.log("Navigating to delivery ID:", id);
+    // Navigate to the active delivery details page with the given ID
     router.push({
       pathname: "/(tabs)/active/[id]",
       params: { id },
     });
   };
 
-  const getPriorityInfo = (priority: number) => {
-    if (priority >= 7) return { level: "high", label: "High Priority" };
-    if (priority >= 4) return { level: "medium", label: "Medium Priority" };
-    return { level: "low", label: "Low Priority" };
-  };
-
-  const formatTime = (time: string | Date) => {
-    const date = typeof time === "string" ? new Date(time) : time;
-    if (isNaN(date.getTime())) return "Invalid time";
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
+  
 
   const renderItem = ({ item }: { item: DeliveryQueueForDriver }) => {
     const { level, label } = getPriorityInfo(item.priority);
@@ -360,26 +352,31 @@ const DeliveryQueue: React.FC<DeliveryQueueProps> = ({
 
     return (
       <TouchableOpacity
-        className="bg-white p-4 rounded-lg mb-3 shadow-sm"
+        className="bg-gray-600 p-4 rounded-lg mb-3 shadow-sm border-[white] border"
         onPress={() => handleNavigation(item.delivery_id)}
       >
-        <View className="flex-row justify-between items-center mb-1">
-          <Text className="text-lg font-semibold text-gray-800">
-            {item.customer.first_name} {item.customer.last_name}
-          </Text>
-          <Feather name="chevron-right" size={20} color="gray" />
+        <View className="flex-row justify-between items-start mb-2 text-white">
+          <View className="flex-row items-center gap-2">
+            <View className="flex-row items-center justify-center bg-gray-800 w-12 h-12 rounded-full">
+              <Feather name="package" size={20} color="white" />
+            </View>
+            <Text className="text-lg font-semibold text-white">
+              {item.customer.first_name} {item.customer.last_name}
+            </Text>
+          </View>
+          <Feather name="chevron-right" size={20} color="white" className="mt-2"/>
         </View>
 
-        <Text className="text-sm text-gray-500 mb-2">{item.dropoff_location}</Text>
+        <Text className="text-md text-white mb-2">{item.dropoff_location}</Text>
 
         <View className="flex-row justify-between items-center">
           <View className="flex-row items-center gap-2">
             <MaterialCommunityIcons
               name="clock-outline"
               size={18}
-              color="gray"
+              color="white"
             />
-            <Text className="text-sm text-gray-600">
+            <Text className="text-sm text-white">
               {formatTime(item.time_slot?.start_time)} -{" "}
               {formatTime(item.time_slot?.end_time)}
             </Text>
@@ -414,8 +411,9 @@ const DeliveryQueue: React.FC<DeliveryQueueProps> = ({
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         ) : undefined
       }
+      scrollEnabled={false}
     />
   );
 };
-
+//!imp -> this flatlist inside the scrollview of delivery queue is not scrollable, so we need to set the scrollEnabled prop to false(or see what else we can do to make it scrollable)
 export default DeliveryQueue;

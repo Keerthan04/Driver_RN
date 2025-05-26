@@ -1,9 +1,11 @@
-import { Delivery } from "@/types";
+// import { Delivery } from "@/types";
+import { getPriorityInfo } from "@/Lib/utils";
+import { DeliveryQueueForDriver } from "@/types";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
-import { Badge, Card } from "react-native-paper";
+import {  Card } from "react-native-paper";
 
-export default function DeliveryInfo({ delivery }: { delivery: Delivery }) {
+export default function DeliveryInfo({ delivery }: { delivery: DeliveryQueueForDriver }) {
   return (
     <Card className="p-4 rounded-lg w-full mt-2">
       <View className="bg-gray-900 p-4 rounded-lg">
@@ -19,9 +21,9 @@ export default function DeliveryInfo({ delivery }: { delivery: Delivery }) {
           </View>
           <View className="flex-1">
             <Text className="text-white text-lg">
-              {delivery.deliveryType} Package
+              {getPriorityInfo(delivery.priority).label} Package
             </Text>
-            <Text className="text-gray-400">Tracking: {delivery.id}</Text>
+            <Text className="text-gray-400">Tracking: {delivery.delivery_id}</Text>
           </View>
           {/* <View className="h-full m-2 p-4"> Still to do properly
             <Badge className="bg-amber-500 text-black py-1 px-3 rounded-lg">
@@ -52,8 +54,8 @@ export default function DeliveryInfo({ delivery }: { delivery: Delivery }) {
         </View>
 
         <View className="bg-gray-800 p-3 rounded-lg">
-          <Text className="text-gray-400 mb-1">Special Handling</Text>
-          <Text className="text-white">{delivery.specialInstructions}</Text>
+          <Text className="text-gray-400 mb-1">Delivery Instructions</Text>
+          <Text className="text-white">{delivery.delivery_instructions}</Text>
         </View>
       </View>
     </Card>

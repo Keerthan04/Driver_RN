@@ -266,7 +266,7 @@ import { ScrollView, View, Text, Switch } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ActivityIndicator } from "react-native-paper";
 import Toast from "react-native-toast-message";
-import { useAuth } from "../../context/AuthContext";
+// import { useAuth } from "../../context/AuthContext";
 import DeliveryQueue from "../ui/DeliveryQueue";
 import WeatherAlert from "../ui/WeatherAlert";
 import { DeliveryQueueForDriver } from "@/types";
@@ -274,7 +274,7 @@ import { DashboardDataFetcher } from "@/Lib/fetchDataServices";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const DashboardScreen = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const [isAvailable, setIsAvailable] = useState(true);
   const [deliveryQueue, setDeliveryQueue] = useState<DeliveryQueueForDriver[]>(
     []
@@ -345,6 +345,7 @@ const DashboardScreen = () => {
       </SafeAreaView>
     );
   }
+  
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -357,8 +358,8 @@ const DashboardScreen = () => {
         <View className="flex-row justify-between items-center mb-6">
           <View className="flex-1">
             <Text className="text-2xl font-bold text-gray-900">Dashboard</Text>
-            <Text className="text-gray-500 mt-1">
-              Welcome back, {user?.name || "Driver"}
+            <Text className="text-black mt-1">
+              Welcome back, {deliveryQueue[0]?.driver.first_name + " " + deliveryQueue[0]?.driver.last_name || "Driver"}
             </Text>
           </View>
 
@@ -445,7 +446,7 @@ const SummaryCard = ({
   label: string;
   value: string;
 }) => (
-  <View className="flex-1 items-center border border-white justify-center bg-gray-700 rounded-lg p-4">
+  <View className="flex-1 items-center border border-white justify-center bg-gray-700 rounded-lg p-4 mb-2">
     <MaterialCommunityIcons name={icon} size={28} color="white" />
     <Text className="text-xl text-white font-bold mt-2">{value}</Text>
     <Text className="text-white text-sm">{label}</Text>

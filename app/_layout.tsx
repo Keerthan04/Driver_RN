@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 import "./globals.css"
 import Toast from "react-native-toast-message";
+// import { toastConfig } from "@/Lib/toastConfig";
 export default function RootLayout() {
   return (
     <>
@@ -9,7 +10,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }}/>
         <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>;
-      <Toast/>
+      <Toast swipeable={true}/>
     </>
   );
 }
