@@ -9,11 +9,12 @@ import {
 import { Button, ActivityIndicator } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RouteList } from "../ui/Route/RouteList";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { DashboardDataFetcher } from "@/Lib/fetchDataServices";
 import { DeliveryQueueForDriver, DeliveryStatus } from "@/types";
 import { useState, useCallback, useEffect } from "react";
 import Toast from "react-native-toast-message";
+// import { useAuth } from "@/context/AuthContext";
 
 const RouteScreen = () => {
   const [deliveryQueue, setDeliveryQueue] = useState<DeliveryQueueForDriver[]>(
@@ -22,7 +23,7 @@ const RouteScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
+  
   const fetchDeliveryQueue = useCallback(
     async (showToast = true) => {
       try {
@@ -109,7 +110,7 @@ const RouteScreen = () => {
 
   const stats = getDeliveryStats();
 
-  if (isLoading) {
+  if (isLoading ) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50">
         <View className="flex-1 items-center justify-center">
@@ -151,6 +152,7 @@ const RouteScreen = () => {
     month: "long",
     day: "numeric",
   });
+
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">

@@ -1,16 +1,17 @@
 import { Stack } from "expo-router";
-import "./globals.css"
 import Toast from "react-native-toast-message";
+import "./globals.css";
 // import { toastConfig } from "@/Lib/toastConfig";
+import { AuthProvider } from "@/context/AuthContext";
+
 export default function RootLayout() {
   return (
-    <>
-      <Stack >
-        {/* <Stack.Screen name="index" options={{ headerShown: false }} /> */}
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }}/>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+    <AuthProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="auth" />
       </Stack>
-      <Toast swipeable={true}/>
-    </>
+      <Toast swipeable={true} />
+    </AuthProvider>
   );
 }

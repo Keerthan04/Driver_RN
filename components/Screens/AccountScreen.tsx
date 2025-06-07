@@ -1,18 +1,25 @@
 import { View, ScrollView, TouchableOpacity, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
+import {  useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { PerformanceMetrics } from "../ui/Account/PerformanceMetrics";
 import { EarningsInfo } from "../ui/Account/EarningsInfo";
 import { ProfileSettings } from "../ui/Account/ProfileSettings";
 import { VehicleInfo } from "../ui/Account/VehicleInfo";
 import { Link } from "expo-router";
+import { ActivityIndicator } from "react-native-paper";
 
 const AccountScreen = () => {
-  const { logout } = useAuth();
+  const { logout,isMainLoading } = useAuth();
   const [activeTab, setActiveTab] = useState("performance");
-
+  if (isMainLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-white items-center justify-center">
+        <ActivityIndicator size="large" color="#0000ff" />
+      </SafeAreaView>
+    );
+  }
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView className="p-4 pb-20">

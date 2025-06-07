@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -22,20 +22,25 @@ const LoginScreen = () => {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("login");
   const router = useRouter();
-  const { login } = useAuth();
-
+  const { login, isAuthenticated } = useAuth();
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/(tabs)");
+    }
+  }, [isAuthenticated]);
   const handleLogin = async () => {
-    router.push("/(tabs)");
+    console.log("Logging in with:", email, password);
+    // router.push("/(tabs)");
     if (!email || !password) {
       setError("Please enter both email and password");
       return;
     }
-
     setIsLoading(true);
     setError("");
 
     try {
       const success = await login(email, password);
+      console.log("Login success:", success);
       if (!success) {
         setError("Invalid email or password");
       } else {

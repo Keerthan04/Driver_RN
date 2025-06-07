@@ -272,16 +272,16 @@ import WeatherAlert from "../ui/WeatherAlert";
 import { DeliveryQueueForDriver } from "@/types";
 import { DashboardDataFetcher } from "@/Lib/fetchDataServices";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import { useAuth } from "../../context/AuthContext";
+// import { useRouter } from "expo-router";
 const DashboardScreen = () => {
-  // const { user } = useAuth();
+  const { driver, token} = useAuth();
   const [isAvailable, setIsAvailable] = useState(true);
   const [deliveryQueue, setDeliveryQueue] = useState<DeliveryQueueForDriver[]>(
     []
   );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
   const fetchDeliveryQueue = useCallback(async (showToast = true) => {
     try {
       setError(null);
@@ -335,7 +335,7 @@ const DashboardScreen = () => {
     fetchDeliveryQueue(false);
   }, [fetchDeliveryQueue]);
 
-  if (isLoading) {
+  if (isLoading ) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50">
         <View className="flex-1 items-center justify-center">
