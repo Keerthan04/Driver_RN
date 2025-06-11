@@ -43,6 +43,8 @@ const AuthContext = createContext<AuthContextType>({
 
 const axiosInstance = axios.create({
   baseURL: "http://192.168.31.193:8000/api",
+  // baseURL: "http://26.219.114.145:8000/api",
+  // baseURL: "http://192.168.30.246:8000/api",
   withCredentials: true,
 });
 

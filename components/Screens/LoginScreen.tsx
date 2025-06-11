@@ -61,7 +61,7 @@ const LoginScreen = () => {
           <View className="w-16 h-16 rounded-full bg-[#FFD86B] justify-center items-center mb-4">
             <MaterialCommunityIcons name="shield" size={32} color="#111827" />
           </View>
-          <Text className="text-2xl font-bold text-white">Nexustron</Text>
+          <Text className="text-2xl font-bold text-white">MargaDarshi</Text>
           <Text className="text-gray-400 mt-1">Driver Portal</Text>
         </View>
 

@@ -5,6 +5,8 @@ import { DeliveryQueryResponse } from '@/types';
 // import { BACKEND_URL } from '@env'; // if using react-native-dotenv
 // or define it directly for now:
 const BACKEND_URL = "http://192.168.31.193:8000/api";
+// const BACKEND_URL = "http://26.219.114.145:8000/api";
+// const BACKEND_URL = "http://192.168.30.246:8000/api";
 
 export async function DashboardDataFetcher(driver_id: string, date: string) {
     try {
