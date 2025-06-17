@@ -273,9 +273,10 @@ import { DeliveryQueueForDriver } from "@/types";
 import { DashboardDataFetcher } from "@/Lib/fetchDataServices";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
+import { startBackgroundLocationTracking } from "@/Lib/location/StartTracking";
 // import { useRouter } from "expo-router";
 const DashboardScreen = () => {
-  const { driver, token} = useAuth();
+  const { driver, token } = useAuth();
   const [isAvailable, setIsAvailable] = useState(true);
   const [deliveryQueue, setDeliveryQueue] = useState<DeliveryQueueForDriver[]>(
     []
@@ -287,8 +288,12 @@ const DashboardScreen = () => {
       setError(null);
       setIsLoading(true);
 
-      const mockDriverId = "69ca617c-9259-492f-a73a-e9e351204678";
-      const mockDate = "2025-05-27";
+      // const mockDriverId = "69ca617c-9259-492f-a73a-e9e351204678";
+      // const mockDate = "2025-05-27";
+      //to get based on actual driver and todays date
+      const mockDriverId =
+        driver?.driver_id || "69ca617c-9259-492f-a73a-e9e351204678";
+      const mockDate = new Date().toISOString().split("T")[0];
       const queue = await DashboardDataFetcher(mockDriverId, mockDate);
 
       setDeliveryQueue(queue);
@@ -334,8 +339,20 @@ const DashboardScreen = () => {
   useEffect(() => {
     fetchDeliveryQueue(false);
   }, [fetchDeliveryQueue]);
+    // To start the background location tracking (not tested for now but should work)
+    useEffect(() => {
+      const initializeLocationTracking = async () => {
+        try {
+          await startBackgroundLocationTracking();
+          console.log("Background location tracking started");
+        } catch (error) {
+          console.error("Failed to start location tracking:", error);
+        }
+      };
+      initializeLocationTracking();
+    }, []);
 
-  if (isLoading ) {
+  if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50">
         <View className="flex-1 items-center justify-center">
@@ -345,7 +362,6 @@ const DashboardScreen = () => {
       </SafeAreaView>
     );
   }
-  
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -359,7 +375,10 @@ const DashboardScreen = () => {
           <View className="flex-1">
             <Text className="text-2xl font-bold text-gray-900">Dashboard</Text>
             <Text className="text-black mt-1">
-              Welcome back, {deliveryQueue[0]?.driver.first_name + " " + deliveryQueue[0]?.driver.last_name || "Driver"}
+              Welcome back,{" "}
+              {deliveryQueue[0]?.driver.first_name +
+                " " +
+                deliveryQueue[0]?.driver.last_name || "Driver"}
             </Text>
           </View>
 

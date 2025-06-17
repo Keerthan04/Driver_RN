@@ -2,6 +2,7 @@ import * as TaskManager from "expo-task-manager";
 // import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { io } from "socket.io-client";
+// import { useAuth } from "@/context/AuthContext";
 
 const LOCATION_TASK_NAME = "background-location-task";
 
@@ -26,7 +27,15 @@ TaskManager.defineTask(
       const { locations } = data;
       const { latitude, longitude } = locations[0].coords;
 
-      const driverId = await AsyncStorage.getItem("driverId"); // get driverId stored at login
+      // const driverId = await AsyncStorage.getItem("driverId"); // get driverId stored at login
+      // const { driver } = useAuth();
+      // const driverId = driver?.driver_id; // Assuming driver object has an id property
+      const driverString = await AsyncStorage.getItem("driver");
+      let driverData;
+      if (driverString) {
+        driverData = JSON.parse(driverString);
+      }
+      const driverId = driverData?.driver_id;
       if (!driverId) return;
 
       socket.emit("driver_location", {
