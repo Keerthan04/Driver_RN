@@ -289,13 +289,13 @@ const DashboardScreen = () => {
       setIsLoading(true);
 
       // const mockDriverId = "69ca617c-9259-492f-a73a-e9e351204678";
-      // const mockDate = "2025-05-27";
+      const mockDate = "2025-05-27";
       //to get based on actual driver and todays date
       const mockDriverId =
         driver?.driver_id || "69ca617c-9259-492f-a73a-e9e351204678";
-      const mockDate = new Date().toISOString().split("T")[0];
+      // const mockDate = new Date().toISOString().split("T")[0];// !imp for now using the mock date else this only shd be used
       const queue = await DashboardDataFetcher(mockDriverId, mockDate);
-
+      console.log(queue);
       setDeliveryQueue(queue);
 
       Toast.show({
@@ -340,17 +340,17 @@ const DashboardScreen = () => {
     fetchDeliveryQueue(false);
   }, [fetchDeliveryQueue]);
     // To start the background location tracking (not tested for now but should work)
-    useEffect(() => {
-      const initializeLocationTracking = async () => {
-        try {
-          await startBackgroundLocationTracking();
-          console.log("Background location tracking started");
-        } catch (error) {
-          console.error("Failed to start location tracking:", error);
-        }
-      };
-      initializeLocationTracking();
-    }, []);
+    // useEffect(() => {
+    //   const initializeLocationTracking = async () => {
+    //     try {
+    //       await startBackgroundLocationTracking();
+    //       console.log("Background location tracking started");
+    //     } catch (error) {
+    //       console.error("Failed to start location tracking:", error);
+    //     }
+    //   };
+    //   initializeLocationTracking();
+    // }, []);
 
   if (isLoading) {
     return (

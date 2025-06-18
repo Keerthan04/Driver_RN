@@ -39,14 +39,7 @@ export default {
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
-        "ACCESS_BACKGROUND_LOCATION",
-        "FOREGROUND_SERVICE",
-        "android.permission.FOREGROUND_SERVICE", // Add this explicit declaration
       ],
-      foregroundService: {
-        notificationTitle: "Location Tracking",
-        notificationBody: "Your location is being tracked in the background",
-      },
       package: "com.anonymous.driver_rn_app",
     },
     web: {
@@ -56,14 +49,6 @@ export default {
     },
     plugins: [
       "expo-router",
-      [
-        "expo-location",
-        {
-          locationAlwaysAndWhenInUsePermission: "This app needs access to location for tracking.",
-          locationAlwaysPermission: "This app needs access to location for background tracking.",
-          locationWhenInUsePermission: "This app needs access to location when app is open.",
-        }
-      ],
       [
         "expo-splash-screen",
         {

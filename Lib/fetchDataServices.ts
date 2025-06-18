@@ -17,18 +17,21 @@ export async function DashboardDataFetcher(driver_id: string, date: string) {
             params: { date },
             timeout: 10000, // 10 second timeout
         });
+        console.log("response is ",response);
         
         const responseData: DeliveryQueryResponse = response.data;
-        
+        console.log("response data is ",responseData);
         // Check if response structure is valid
         if (!responseData) {
             throw new Error("Invalid response from server");
         }
         
         if (responseData.data === null) {
-            throw new Error(
-                responseData.message || "No deliveries found for the given date"
-            );
+            console.log("reached here");
+            // throw new Error(
+            //     responseData.message || "No deliveries found for the given date"
+            // );
+            return []; // Return an empty array if no deliveries found as null means only that no deliveries were found for this date so
         }
         
         if (responseData.success) {
@@ -42,10 +45,12 @@ export async function DashboardDataFetcher(driver_id: string, date: string) {
         
         // Provide more specific error messages
         if (isAxiosError(error)) {
+            console.log(error.response?.data)
             if (error.code === 'ECONNABORTED') {
                 throw new Error("Request timed out. Please check your connection.");
             }
             if (error.response?.status === 404) {
+                console.log(error.response?.status);
                 throw new Error("Driver not found or invalid date.");
             }
             if (error.response && typeof error.response.status === 'number' && error.response.status >= 500) {
