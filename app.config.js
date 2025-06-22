@@ -1,8 +1,8 @@
 import 'dotenv/config';
 export default {
   expo: {
-    name: "driver_rn_app",
-    slug: "driver_rn_app",
+    name: "MargaDarshi Driver App",
+    slug: "MargaDarshiDriverApp",
     extra: {
       googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
       openWeatherApiKey: process.env.OPENWEATHERMAPS_API_KEY,
@@ -35,10 +35,10 @@ export default {
         },
       },
       permissions: [
-        "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
       ],
       package: "com.anonymous.driver_rn_app",
     },
@@ -56,6 +56,15 @@ export default {
           imageWidth: 200,
           resizeMode: "contain",
           backgroundColor: "#ffffff",
+        },
+      ],
+      [
+        "expo-location",
+        {
+          locationAlwaysAndWhenInUsePermission:
+            "Allow MargaDarshi to access your location.",
+          isAndroidBackgroundLocationEnabled: true,
+          isAndroidForegroundServiceEnabled: true,
         },
       ],
     ],

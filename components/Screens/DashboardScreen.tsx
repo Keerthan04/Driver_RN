@@ -340,17 +340,17 @@ const DashboardScreen = () => {
     fetchDeliveryQueue(false);
   }, [fetchDeliveryQueue]);
     // To start the background location tracking (not tested for now but should work)
-    // useEffect(() => {
-    //   const initializeLocationTracking = async () => {
-    //     try {
-    //       await startBackgroundLocationTracking();
-    //       console.log("Background location tracking started");
-    //     } catch (error) {
-    //       console.error("Failed to start location tracking:", error);
-    //     }
-    //   };
-    //   initializeLocationTracking();
-    // }, []);
+    useEffect(() => {
+      const initializeLocationTracking = async () => {
+        try {
+          await startBackgroundLocationTracking();
+          console.log("Background location tracking started");
+        } catch (error) {
+          console.error("Failed to start location tracking:", error);
+        }
+      };
+      initializeLocationTracking();
+    }, []);
 
   if (isLoading) {
     return (
