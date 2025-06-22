@@ -18,8 +18,8 @@ export const startBackgroundLocationTracking = async () => {
   if (!hasStarted) {
     await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
       accuracy: Location.Accuracy.High,
-      timeInterval: 5000,
-      distanceInterval: 10,
+      timeInterval: 10000, // 10 seconds
+      distanceInterval: 50,// 50 meters
       showsBackgroundLocationIndicator: true,
       foregroundService: {
         notificationTitle: "Nexustron App",

@@ -7,7 +7,14 @@ import { io } from "socket.io-client";
 const LOCATION_TASK_NAME = "background-location-task";
 
 // Initialize socket
-const socket = io("http://localhost:4000");
+// const socket = io("http://localhost:4000");
+const socket = io("http://192.168.31.193:4000");
+socket.on("connect", () => {
+  console.log("Socket connected:", socket.id);
+});
+socket.on("connect_error", (err) => {
+  console.error("Socket connection error:", err.message);
+});
 
 TaskManager.defineTask(
   LOCATION_TASK_NAME,
@@ -38,11 +45,21 @@ TaskManager.defineTask(
       const driverId = driverData?.driver_id;
       if (!driverId) return;
 
-      socket.emit("driver_location", {
-        driverId,
-        latitude,
-        longitude,
-      });
+      // socket.emit("driver_location", {
+      //   driverId,
+      //   latitude,
+      //   longitude,
+      // });
+      if (socket.connected) {
+        socket.emit("driver_location", {
+          driverId,
+          latitude,
+          longitude,
+        });
+        console.log("Sent background location:", latitude, longitude);
+      } else {
+        console.warn("Socket not connected. Skipping emit.");
+      }
 
       console.log("Sent background location:", latitude, longitude);
     }

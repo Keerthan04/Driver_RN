@@ -295,7 +295,7 @@ const DashboardScreen = () => {
         driver?.driver_id || "69ca617c-9259-492f-a73a-e9e351204678";
       // const mockDate = new Date().toISOString().split("T")[0];// !imp for now using the mock date else this only shd be used
       const queue = await DashboardDataFetcher(mockDriverId, mockDate);
-      console.log(queue);
+      // console.log(queue);
       setDeliveryQueue(queue);
 
       Toast.show({

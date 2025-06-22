@@ -17,10 +17,10 @@ export async function DashboardDataFetcher(driver_id: string, date: string) {
             params: { date },
             timeout: 10000, // 10 second timeout
         });
-        console.log("response is ",response);
+        // console.log("response is ",response);
         
         const responseData: DeliveryQueryResponse = response.data;
-        console.log("response data is ",responseData);
+        // console.log("response data is ",responseData);
         // Check if response structure is valid
         if (!responseData) {
             throw new Error("Invalid response from server");
