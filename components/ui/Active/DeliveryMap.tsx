@@ -12,6 +12,7 @@ import MapView, {
 } from "react-native-maps";
 import { Button, Card } from "react-native-paper";
 import { formatTime, getPriorityInfo, getStatusClasses, getStatusLabel, getStatusTextClasses } from "@/Lib/utils";
+import { DeliveryStatusChange } from "@/Lib/fetchDataServices";
 
 interface Coordinates {
   latitude: number;
@@ -21,9 +22,10 @@ interface Coordinates {
 interface DeliveryMapProps {
   delivery: DeliveryQueueForDriver | null;
   setDeliveryStatus: (status: DeliveryStatus) => void;
+  deliveryStatus: DeliveryStatus;
 }
 
-export default function DeliveryMap({ delivery, setDeliveryStatus }: DeliveryMapProps) {
+export default function DeliveryMap({ delivery, setDeliveryStatus, deliveryStatus}: DeliveryMapProps) {
   const [currentLocation] = useState("Udupi City Bus Stand, Udupi, Karnataka");
   const [eta, setEta] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -193,7 +195,25 @@ export default function DeliveryMap({ delivery, setDeliveryStatus }: DeliveryMap
       Linking.openURL(webUrl);
     });
   };
-
+  const changeDeliveryStatus = async(status: DeliveryStatus) => {
+    try {
+      if (
+        !delivery?.driver?.driver_id ||
+        !delivery?.delivery_id
+      ) {
+        throw new Error("Driver ID or Delivery ID is missing");
+      }
+      await DeliveryStatusChange(
+        delivery?.driver?.driver_id,
+        delivery?.delivery_id,
+        status
+      );
+      setDeliveryStatus(status);
+    } catch (error) {
+      console.error("Error updating delivery status:", error);
+      Alert.alert("Error", "Failed to update delivery status");
+    }
+  };
   if (!delivery) {
     return (
       <View className="flex-1 w-full px-2">
@@ -277,26 +297,59 @@ export default function DeliveryMap({ delivery, setDeliveryStatus }: DeliveryMap
                   ETA: {isLoading ? "Calculating..." : eta}
                 </Text>
               </View>
-
-              <TouchableOpacity
-                onPress={openGoogleMapsNavigation}
-                disabled={!destinationCoords}
-              >
+              {(deliveryStatus === DeliveryStatus.pending ||
+                deliveryStatus === DeliveryStatus.in_progress) && (
+                <TouchableOpacity
+                  onPress={openGoogleMapsNavigation}
+                  disabled={!destinationCoords}
+                >
+                  <Button
+                    mode="elevated"
+                    className="rounded-lg"
+                    buttonColor="#FFD86B"
+                    disabled={!destinationCoords}
+                    onPress={ () => changeDeliveryStatus(DeliveryStatus.in_progress)}
+                    contentStyle={{ paddingHorizontal: 4, paddingVertical: 4 }}
+                  >
+                    <View className="flex-row items-center justify-center">
+                      <AntDesign name="enviromento" size={16} color="black" />
+                      <Text className="text-black font-semibold text-sm ml-2">
+                        Start Navigation
+                      </Text>
+                    </View>
+                  </Button>
+                </TouchableOpacity>
+              )}
+              {deliveryStatus === DeliveryStatus.completed && (
                 <Button
                   mode="elevated"
                   className="rounded-lg"
-                  buttonColor="#FFD86B"
-                  disabled={!destinationCoords}
+                  buttonColor="#10B981"
                   contentStyle={{ paddingHorizontal: 4, paddingVertical: 4 }}
                 >
                   <View className="flex-row items-center justify-center">
-                    <AntDesign name="enviromento" size={16} color="black" />
+                    <AntDesign name="check" size={16} color="black" />
                     <Text className="text-black font-semibold text-sm ml-2">
-                      Start Navigation
+                      Completed
                     </Text>
                   </View>
                 </Button>
-              </TouchableOpacity>
+              )}
+              {deliveryStatus === DeliveryStatus.cancelled && (
+                <Button
+                  mode="elevated"
+                  className="rounded-lg"
+                  buttonColor="#DC2626"
+                  contentStyle={{ paddingHorizontal: 4, paddingVertical: 4 }}
+                >
+                  <View className="flex-row items-center justify-center">
+                    <AntDesign name="check" size={16} color="black" />
+                    <Text className="text-black font-semibold text-sm ml-2">
+                      Cancelled
+                    </Text>
+                  </View>
+                </Button>
+              )}
             </View>
           </View>
 

@@ -340,17 +340,17 @@ const DashboardScreen = () => {
     fetchDeliveryQueue(false);
   }, [fetchDeliveryQueue]);
     // To start the background location tracking (not tested for now but should work)
-    useEffect(() => {
-      const initializeLocationTracking = async () => {
-        try {
-          await startBackgroundLocationTracking();
-          console.log("Background location tracking started");
-        } catch (error) {
-          console.error("Failed to start location tracking:", error);
-        }
-      };
-      initializeLocationTracking();
-    }, []);
+    // useEffect(() => {
+    //   const initializeLocationTracking = async () => {
+    //     try {
+    //       await startBackgroundLocationTracking();
+    //       console.log("Background location tracking started");
+    //     } catch (error) {
+    //       console.error("Failed to start location tracking:", error);
+    //     }
+    //   };
+    //   initializeLocationTracking();
+    // }, []);
 
   if (isLoading) {
     return (
@@ -431,7 +431,7 @@ const DashboardScreen = () => {
         <WeatherAlert />
 
         {/* Daily Summary */}
-        <View className="bg-gray-900 p-4 rounded-lg">
+        {/* <View className="bg-gray-900 p-4 rounded-lg">
           <Text className="text-xl text-white text-center font-bold mb-4">
             Daily Summary
           </Text>
@@ -450,7 +450,7 @@ const DashboardScreen = () => {
               <SummaryCard icon="trending-up" label="On-time" value="98%" />
             </View>
           </View>
-        </View>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
   );

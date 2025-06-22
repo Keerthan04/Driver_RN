@@ -112,3 +112,44 @@ export async function DeliveryDetailsFetcher(driver_id: string, delivery_id: str
         throw error;
     }
 }
+
+export async function DeliveryStatusChange(driver_id: string, delivery_id:string, status: "completed" | "cancelled" | "pending" | "in_progress") {
+    try {
+        const url = `${BACKEND_URL}/drivers/${driver_id}/${delivery_id}/status`;
+        const response = await axios.post(url, { status }, {
+            timeout: 10000, // 10 second timeout
+        });
+        
+        const responseData = response.data;
+        
+        if (!responseData) {
+            throw new Error("Invalid response from server");
+        }
+        
+        if (responseData.success) {
+            return responseData.data;
+        }
+        
+        throw new Error(responseData.message || "Failed to change delivery status");
+        
+    } catch (error) {
+        console.error("Error changing delivery status:", error);
+        
+        if (isAxiosError(error)) {
+            if (error.code === 'ECONNABORTED') {
+                throw new Error("Request timed out. Please check your connection.");
+            }
+            if (error.response?.status === 404) {
+                throw new Error("Delivery not found.");
+            }
+            if (error.response && typeof error.response.status === 'number' && error.response.status >= 500) {
+                throw new Error("Server error. Please try again later.");
+            }
+            if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+        }
+        
+        throw error;
+    }
+}
