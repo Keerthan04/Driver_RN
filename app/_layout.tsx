@@ -3,6 +3,7 @@ import Toast from "react-native-toast-message";
 import "./globals.css";
 // import { toastConfig } from "@/Lib/toastConfig";
 import { AuthProvider } from "@/context/AuthContext";
+import "../Lib/location/location-task";
 
 export default function RootLayout() {
   return (

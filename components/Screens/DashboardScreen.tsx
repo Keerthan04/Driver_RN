@@ -274,6 +274,7 @@ import { DashboardDataFetcher } from "@/Lib/fetchDataServices";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
 import { startBackgroundLocationTracking } from "@/Lib/location/StartTracking";
+// import DebugLocationComponent from "@/Lib/location/DebugLocation";
 // import { useRouter } from "expo-router";
 const DashboardScreen = () => {
   const { driver, token } = useAuth();
@@ -340,17 +341,17 @@ const DashboardScreen = () => {
     fetchDeliveryQueue(false);
   }, [fetchDeliveryQueue]);
     // To start the background location tracking (not tested for now but should work)
-    // useEffect(() => {
-    //   const initializeLocationTracking = async () => {
-    //     try {
-    //       await startBackgroundLocationTracking();
-    //       console.log("Background location tracking started");
-    //     } catch (error) {
-    //       console.error("Failed to start location tracking:", error);
-    //     }
-    //   };
-    //   initializeLocationTracking();
-    // }, []);
+    useEffect(() => {
+      const initializeLocationTracking = async () => {
+        try {
+          await startBackgroundLocationTracking();
+          console.log("Background location tracking started");
+        } catch (error) {
+          console.error("Failed to start location tracking:", error);
+        }
+      };
+      initializeLocationTracking();
+    }, []);
 
   if (isLoading) {
     return (
@@ -381,7 +382,7 @@ const DashboardScreen = () => {
                 deliveryQueue[0]?.driver.last_name || "Driver"}
             </Text>
           </View>
-
+          {/* <DebugLocationComponent/> */}
           <View className="flex-row items-center ml-4">
             <Switch
               value={isAvailable}
