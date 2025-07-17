@@ -1,32 +1,86 @@
+//!main one->but no stoping happens
+// import * as Location from "expo-location";
+// import { LOCATION_TASK_NAME } from "./location-task";
+
+// export const startBackgroundLocationTracking = async () => {
+//   const { status: fgStatus } =
+//     await Location.requestForegroundPermissionsAsync();
+//   const { status: bgStatus } =
+//     await Location.requestBackgroundPermissionsAsync();
+
+//   if (fgStatus !== "granted" || bgStatus !== "granted") {
+//     console.warn("Permissions not granted for location tracking.");
+//     return;
+//   }
+//   console.log("Foreground and background permissions granted");
+
+//   const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+//     LOCATION_TASK_NAME
+//   );
+//   console.log("Location tracking started:", hasStarted);
+//   if (!hasStarted) {
+//     console.log("Starting background location tracking...");
+//     await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+//       accuracy: Location.Accuracy.BestForNavigation,
+//       timeInterval: 3000, // 3 seconds
+//       distanceInterval: 5, // 5 meters
+//       showsBackgroundLocationIndicator: true,
+//       foregroundService: {
+//         notificationTitle: "Nexustron App",
+//         notificationBody:
+//           "Tracking your live location in background, Don't close the app and Don't Worry",
+//       },
+//     });
+//     console.log("Started background location tracking");
+//   }
+//   console.log("Location tracking is already started");
+// };
+
+//!another one but here if already started then stops and then starts again
 import * as Location from "expo-location";
 import { LOCATION_TASK_NAME } from "./location-task";
 
 export const startBackgroundLocationTracking = async () => {
-  const { status: fgStatus } =
-    await Location.requestForegroundPermissionsAsync();
-  const { status: bgStatus } =
-    await Location.requestBackgroundPermissionsAsync();
+  try {
+    const { status: fgStatus } =
+      await Location.requestForegroundPermissionsAsync();
+    const { status: bgStatus } =
+      await Location.requestBackgroundPermissionsAsync();
 
-  if (fgStatus !== "granted" || bgStatus !== "granted") {
-    console.warn("Permissions not granted for location tracking.");
-    return;
-  }
+    if (fgStatus !== "granted" || bgStatus !== "granted") {
+      console.warn("Permissions not granted for location tracking.");
+      return;
+    }
 
-  const hasStarted = await Location.hasStartedLocationUpdatesAsync(
-    LOCATION_TASK_NAME
-  );
-  if (!hasStarted) {
+    console.log("Foreground and background permissions granted");
+
+    const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+      LOCATION_TASK_NAME
+    );
+
+    if (hasStarted) {
+      console.log("Background location task already running. Stopping it...");
+      await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+      console.log("Stopped previous background location task");
+    }
+
+    console.log("Starting background location tracking...");
+
     await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-      accuracy: Location.Accuracy.High,
-      timeInterval: 10000, // 10 seconds
-      distanceInterval: 50,// 50 meters
+      accuracy: Location.Accuracy.BestForNavigation,
+      timeInterval: 3000, // in ms
+      distanceInterval: 5, // in meters
       showsBackgroundLocationIndicator: true,
       foregroundService: {
         notificationTitle: "Nexustron App",
-        notificationBody: "Tracking your live location in background, Don't close the app and Don't Worry",
+        notificationBody:
+          "Tracking your live location in background. Don’t close the app.",
       },
     });
+
     console.log("Started background location tracking");
+  } catch (error) {
+    console.error("Error during background location tracking setup:", error);
   }
 };
 
