@@ -13,6 +13,7 @@ import MapView, {
 import { Button, Card } from "react-native-paper";
 import { formatTime, getPriorityInfo, getStatusClasses, getStatusLabel, getStatusTextClasses } from "@/Lib/utils";
 import { DeliveryStatusChange } from "@/Lib/fetchDataServices";
+// import * as IntentLauncher from "expo-intent-launcher";
 
 interface Coordinates {
   latitude: number;
@@ -195,6 +196,30 @@ export default function DeliveryMap({ delivery, setDeliveryStatus, deliveryStatu
       Linking.openURL(webUrl);
     });
   };
+  // const openGoogleMapsNavigationReliable = ()=>{
+  //   setDeliveryStatus(DeliveryStatus.in_progress);
+
+  //   if (!destinationCoords) {
+  //     Alert.alert("Error", "Destination coordinates not available");
+  //     return;
+  //   }
+
+  //   const destination = `${destinationCoords.latitude},${destinationCoords.longitude}`;
+
+  //   try {
+  //     // This will open the Google Maps app directly with navigation
+  //     IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+  //       data: `google.navigation:q=${destination}&mode=d`,
+  //       packageName: "com.google.android.apps.maps",
+  //     });
+  //   } catch (err) {
+  //     console.error("Intent launch error:", err);
+
+  //     // Fallback to browser if Google Maps app is not available
+  //     const webUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
+  //     Linking.openURL(webUrl);
+  //   }
+  // }
   const changeDeliveryStatus = async(status: DeliveryStatus) => {
     try {
       if (

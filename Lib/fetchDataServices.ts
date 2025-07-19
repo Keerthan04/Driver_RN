@@ -1,5 +1,5 @@
 import axios , { isAxiosError } from 'axios';
-import { DeliveryQueryResponse } from '@/types';
+import { DeliveryQueryResponse, RouteData } from '@/types';
 
 // For React Native, you might need to use:
 // import { BACKEND_URL } from '@env'; // if using react-native-dotenv
@@ -152,4 +152,39 @@ export async function DeliveryStatusChange(driver_id: string, delivery_id:string
         
         throw error;
     }
+}
+
+export async function getRouteByDriverIdAndDate(
+  driver_id: string,
+  date: string
+) {
+  try {
+    console.log(
+      "Making API call to:",
+      `${BACKEND_URL}/routes/route/${driver_id}/${date}`
+    );
+
+    const res = await axios.get(
+      `${BACKEND_URL}/routes/route/${driver_id}/${date}`,
+      {
+        timeout: 10000, // 10 second timeout
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("API Response", res.data);
+    if (res.data.success === false) {
+      console.error("API Error:", res.data.message);
+      return null;
+      // throw new Error(res.data.message);
+    }
+
+    console.log("API Response:", res.data);
+    return res.data.data as RouteData[];
+  } catch (error) {
+    console.error("API Error:", error);
+    // throw error;
+    return null;
+  }
 }

@@ -281,12 +281,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../context/AuthContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { Image } from "expo-image";
+
+// import { Image } from "expo-image";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  // const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -330,11 +331,14 @@ const LoginScreen = () => {
         <View className="items-center my-8">
           <View className="w-16 h-16 rounded-full bg-[#FFD86B] justify-center items-center mb-4">
             <MaterialCommunityIcons name="shield" size={32} color="#111827" />
-            {/* <Image
+          {/* <Image
               source={require("../../assets/images/logo.svg")}
               className="w-16 h-16 rounded-full"
             /> */}
           </View>
+          {/* <View className="items-center justify-center mt-4">
+            <Logo width={80} height={80} />
+          </View> */}
           <Text className="text-2xl font-bold text-white">MargaDarshi</Text>
           <Text className="text-gray-400 mt-1">Driver Portal</Text>
         </View>
@@ -362,12 +366,12 @@ const LoginScreen = () => {
 
             <View>
               <View className="flex-row justify-between">
-                <Text className="text-white mb-1">Password</Text>
-                <TouchableOpacity onPress={() => router.push("/(tabs)")}>
+                <Text className="text-white mb-2">Password</Text>
+                {/* <TouchableOpacity onPress={() => router.push("/(tabs)")}>
                   <Text className="text-[#FFD86B] text-xs mt-2">
                     Forgot password?
                   </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <TextInput
                 value={password}
@@ -378,7 +382,7 @@ const LoginScreen = () => {
               />
             </View>
 
-            <View className="flex-row items-center">
+            {/* <View className="flex-row items-center">
               <TouchableOpacity
                 onPress={() => setRememberMe(!rememberMe)}
                 className={`w-5 h-5 mt-2 rounded border ${
@@ -398,7 +402,7 @@ const LoginScreen = () => {
               <Text className="ml-2 mt-2 text-gray-400 text-sm">
                 Remember me for 30 days
               </Text>
-            </View>
+            </View> */}
 
             {error ? <Text className="text-red-400">{error}</Text> : null}
 

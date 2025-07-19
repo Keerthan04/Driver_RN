@@ -39,10 +39,10 @@ export default {
         "ACCESS_COARSE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION",
         "FOREGROUND_SERVICE",
-        "POST_NOTIFICATIONS",
+        // "POST_NOTIFICATIONS",
       ],
       package: "com.anonymous.driver_rn_app",
-      useNextNotificationsApi: true,
+      // useNextNotificationsApi: true,
     },
     web: {
       bundler: "metro",
@@ -69,7 +69,7 @@ export default {
           isAndroidForegroundServiceEnabled: true,
         },
       ],
-      "expo-notifications",
+      // "expo-notifications",
     ],
     experiments: {
       typedRoutes: true,

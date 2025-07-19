@@ -278,7 +278,7 @@ import { useAuth } from "../../context/AuthContext";
 // import { useRouter } from "expo-router";
 const DashboardScreen = () => {
   const { driver } = useAuth();
-  const [isAvailable, setIsAvailable] = useState(true);
+  // const [isAvailable, setIsAvailable] = useState(true);
   const [deliveryQueue, setDeliveryQueue] = useState<DeliveryQueueForDriver[]>(
     []
   );
@@ -323,17 +323,17 @@ const DashboardScreen = () => {
     }
   }, []);
 
-  const handleAvailabilityToggle = (value: boolean) => {
-    setIsAvailable(value);
-    Toast.show({
-      type: value ? "success" : "info",
-      text1: value ? "Available" : "Unavailable",
-      text2: `You are now ${
-        value ? "available" : "unavailable"
-      } for deliveries`,
-      position: "top",
-    });
-  };
+  // const handleAvailabilityToggle = (value: boolean) => {
+  //   setIsAvailable(value);
+  //   Toast.show({
+  //     type: value ? "success" : "info",
+  //     text1: value ? "Available" : "Unavailable",
+  //     text2: `You are now ${
+  //       value ? "available" : "unavailable"
+  //     } for deliveries`,
+  //     position: "top",
+  //   });
+  // };
 
   const handleRefresh = () => fetchDeliveryQueue(true);
 
@@ -383,7 +383,7 @@ const DashboardScreen = () => {
             </Text>
           </View>
           {/* <DebugLocationComponent/> */}
-          <View className="flex-row items-center ml-4">
+          {/* <View className="flex-row items-center ml-4">
             <Switch
               value={isAvailable}
               onValueChange={handleAvailabilityToggle}
@@ -397,7 +397,7 @@ const DashboardScreen = () => {
             >
               {isAvailable ? "Available" : "Unavailable"}
             </Text>
-          </View>
+          </View> */}
         </View>
 
         {/* Error */}
